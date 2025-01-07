@@ -1,9 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+/* In styles/globals.css */
+
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
 @layer base {
@@ -66,7 +88,49 @@ body {
   * {
     @apply border-border;
   }
+  p {
+    @apply font-sans
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  .font-label {
+    @apply font-sans font-regular text-[14px] text-text-grey
+  }
+  .form-font {
+    @apply font-sans font-medium text-[14px] text-text-grey border-0
+  }
+  .app-icon-border {
+    @apply w-[56px] h-[56px] border-[1px] rounded-[12px]
+  }
+  .auth-button {
+    @apply w-full h-12 bg-gradient-green rounded-xl py-4
+  }
+  .custom-editor .e-toolbar {
+    @apply absolute bottom-0 left-0 w-full; /* Move toolbar to the bottom */
+  }
+  .custom-editor .e-rte-content {
+    @apply pt-16; /* Add padding to avoid overlap with toolbar */
+  }
+  .custom-editor {
+    @apply relative h-96; /* Make editor relative and adjust height */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* Hide scrollbar for Internet Explorer and Edge */
+    scrollbar-width: none;      /* Hide scrollbar for Firefox */
+  }
+
+  /* Add this to your global CSS file or a specific CSS module */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 }
