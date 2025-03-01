@@ -1,8 +1,12 @@
+'use client'
 import React from 'react';
 import {pageLinks} from "@/utils/pageLinks";
 import Image from "next/image";
+import {usePathname} from "next/navigation";
 
 function SideNav({}) {
+    const pathname = usePathname();
+    console.log({pathname})
     return (
         <aside className="flex flex-col gap-[20px] w-64 bg-gray-20 p-4 border-r-[1px] border-r-grey-20 bg-white">
             <div className="text-2xl font-bold mb-8">

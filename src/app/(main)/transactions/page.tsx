@@ -3,8 +3,6 @@ import React, {useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {CalendarIcon, ChevronDown, SearchIcon, UploadIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import DataCard from "@/components/global/DataCard";
-import GlobalTable from "@/components/global/GlobalTable";
 import {walletMgtData, walletMgtHeaders} from "@/data/tableData";
 import {transactionPageViews} from "@/utils/pageViews";
 import PlansViews from "@/views/transactions/PlansViews";

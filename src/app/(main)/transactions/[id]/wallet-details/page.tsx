@@ -59,7 +59,7 @@ function WalletDetailsPage({}) {
                 <div className={"flex flex-col"}>
                     <div className={"h-[700px] bg-white rounded-tr-[12px] rounded-tl-[12px]"} style={{width: "908px"}}>
                         <div className={"p-[24px] border-b-[1px] border-b-grey-20 flex justify-between items-center"}>
-                            <p className={"text-[16px] font-semiBold"}>Account plan</p>
+                            <p className={"text-[16px] font-semiBold"}>Payout history</p>
                             <div
                                 className={'flex gap-[10px] items-center border-[1px] border-light-grey-50 px-[12px] py-[10px] rounded-[12px]'}>
                                 <PrinterIcon className={"w-[20px]"}/>
@@ -67,10 +67,58 @@ function WalletDetailsPage({}) {
                             </div>
                         </div>
 
-                        <div className={"p-[24px] flex flex-col gap-[40px]"}>
-                            <div className={"gap-[16px]"}>
-                                <p className={"font-semiBold text-[14px]"}>Payout history</p>
-
+                        <div className={"flex flex-col px-[24px]"}>
+                            <div className="px-[16px] pt-[16px] pb-[24px]">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col">
+                                        <p className={"font-medium text-[14px]"}>WA12343 - ₦2,000</p>
+                                        <p className={'text-text-grey font-normal text-[12px]'}>23, Mar 2023.
+                                            05:00PM</p>
+                                    </div>
+                                    <div
+                                        className={"bg-light-green-60 px-[8px] py-[4px] gap-[4px] rounded-[8px] h-fit"}>
+                                        <p className={"text-light-green-70 font-medium text-[12px]"}>Successful</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="px-[16px] pt-[16px] pb-[24px]">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col">
+                                        <p className={"font-medium text-[14px]"}>WA12343 - ₦2,000</p>
+                                        <p className={'text-text-grey font-normal text-[12px]'}>23, Mar 2023.
+                                            05:00PM</p>
+                                    </div>
+                                    <div
+                                        className={"bg-light-green-60 px-[8px] py-[4px] gap-[4px] rounded-[8px] h-fit"}>
+                                        <p className={"text-light-green-70 font-medium text-[12px]"}>Successful</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="px-[16px] pt-[16px] pb-[24px]">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col">
+                                        <p className={"font-medium text-[14px]"}>WA12343 - ₦2,000</p>
+                                        <p className={'text-text-grey font-normal text-[12px]'}>23, Mar 2023.
+                                            05:00PM</p>
+                                    </div>
+                                    <div
+                                        className={"bg-light-green-60 px-[8px] py-[4px] gap-[4px] rounded-[8px] h-fit"}>
+                                        <p className={"text-light-green-70 font-medium text-[12px]"}>Successful</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="px-[16px] pt-[16px] pb-[24px]">
+                                <div className="flex justify-between">
+                                    <div className="flex flex-col">
+                                        <p className={"font-medium text-[14px]"}>WA12343 - ₦2,000</p>
+                                        <p className={'text-text-grey font-normal text-[12px]'}>23, Mar 2023.
+                                            05:00PM</p>
+                                    </div>
+                                    <div
+                                        className={"bg-light-green-60 px-[8px] py-[4px] gap-[4px] rounded-[8px] h-fit"}>
+                                        <p className={"text-light-green-70 font-medium text-[12px]"}>Successful</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

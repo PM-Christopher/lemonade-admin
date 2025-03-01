@@ -8,8 +8,9 @@ export default {
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/features/**/*.{js,ts,jsx,tsx,mdx}",
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/icons/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/icons/**/*.{js,ts,jsx,tsx,mdx,svg}",
 		"./src/modals/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/views/**/*.{js,ts,jsx,tsx,mdx}",
 	],
   theme: {
 	  screens: {
@@ -46,7 +47,7 @@ export default {
 		backgroundImage: {
 			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-			'gradient-green': 'linear-gradient(90deg, #9BE303, #7FBB00)',
+			'gradient-green': 'linear-gradient(12deg, #9BE303, #7FBB00)',
 			'gradient-green-2': 'linear-gradient(90deg, #FFFAAD, #E6FF7C)',
 			'gradient-light-green': 'linear-gradient(90deg, #FFFCCC, #EEFFA8)',
 			'gradient-progress-green': 'linear-gradient(90deg, #EBFFC0, #A2EC02)',
@@ -140,7 +141,13 @@ export default {
 			"light-green-70": "#009D44",
 			"purple-1": "#F9F5FF",
 			"blue-accent-1": "#5D00D4",
-			"red-accent-1": "#FFEBEB"
+			"blue-accent-2": "#0075FF",
+			"red-accent-1": "#FFEBEB",
+			"yellow-accent-1": "#FDFAC4",
+			"yellow-accent-2": "#FEFEF0",
+			"yellow-accent-3": "#CEC529",
+			
+
   		},
 		height: {
 			"desk-content": "calc(100vh-100px)",

@@ -21,13 +21,23 @@ const GlobalTable: React.FC<TableProps> = ({
         let color;
         switch (status) {
             case "Pending":
+            case "Draft":
                 color = "text-warning-bold"; // Text color for Pending
                 break;
             case "Rejected":
+            case "Suspended":
+            case "Removed":
                 color = "text-red-1"; // Text color for Rejected
+                break;
+            case "Scheduled":
+                color = "text-blue-accent-2"; // Text color for Rejected
                 break;
             case "Successful":
             case "Success":
+            case "Completed":
+            case "Resolved":
+            case "Sent":
+            case "Active":
                 color = "text-light-green-70"; // Text color for Successful
                 break;
             default:
@@ -56,7 +66,7 @@ const GlobalTable: React.FC<TableProps> = ({
                         {Object.keys(row).map((key, cellIdx) => (
                             <td
                                 className={`p-4 font-medium text-sm font-sans ${
-                                    key === 'status' ? getStatusClass(row[key]) : ''
+                                    key === 'status' || 'STATUS' ? getStatusClass(row[key]) : ''
                                 }`}
                                 key={cellIdx}
                             >
