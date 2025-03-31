@@ -3,7 +3,7 @@ import DataCard from "@/components/global/DataCard";
 import GlobalTable from "@/components/global/GlobalTable";
 import {affiliateMainData, affiliateMainHeaders, eventMainData, eventMainHeaders} from "@/data/tableData";
 
-const AffiliateView = ({}) => {
+const AffiliateView = ({pageData}: any) => {
     return (
         <>
             <>

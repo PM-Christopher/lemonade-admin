@@ -1,7 +1,7 @@
 import React from 'react';
 import {CalendarIcon, ChevronDown} from "lucide-react";
 
-function ActivitiesViews({}) {
+function ActivitiesViews({userDetail}: any) {
     return (
         <>
             <div className={"flex flex-col py-[20px]"}>

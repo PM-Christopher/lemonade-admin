@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { ChevronDown, MessageCircle, MessageCircleMore, PrinterIcon } from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { usersDetailPageViews } from "@/utils/pageViews";
@@ -10,14 +10,30 @@ import BusinessView from "@/views/users/BusinessView";
 import EventView from "@/views/users/EventView";
 import WalletView from "@/views/users/WalletView";
 import BalanceModal from "@/modals/users/BalanceModal";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getEventDetail} from "@/features/transaction/transaction.slice";
+import {getAccountInfo, getUserDetail} from "@/features/user/user.slice";
 
 function UserDetailsPage({}) {
-  const currentPage: number = 1;
-  const totalPages: number = 10;
+  const currentPage:number = 1
+  const totalPages: number = 10
+  const params = useParams()
+  const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+  const dispatch  = useDispatch<AppDispatch>()
+  const { authToken } = useSelector((state: RootState) => state.auth)
+  const { loading, user, userDetail } = useSelector((state: RootState) => state.user) as { user: any, loading: boolean, userDetail: any }
+
+  useEffect(() => {
+    if (authToken && id) {
+      dispatch(getUserDetail({token: authToken, id}))
+    }
+  }, [])
 
   const [menuOption, setMenuOption] = useState("activities-log");
   const [tribeOpen, setTribeOpen] = useState(false);
-  const [balanceModalOpen, setBalanceModalOpen] = useState(true);
+  const [balanceModalOpen, setBalanceModalOpen] = useState(false);
 
   const switchOption = (option: string) => {
     setMenuOption(option);
@@ -30,21 +46,32 @@ function UserDetailsPage({}) {
   const renderViews = () => {
     switch (menuOption) {
       case "activities-log":
-        return <ActivitiesViews />;
+        return <ActivitiesViews userDetail={userDetail} />;
       case "tribes":
-        return <TribeViews />;
+        return <TribeViews userDetail={userDetail} />;
       case "business":
-        return <BusinessView />;
+        return <BusinessView userDetail={userDetail} />;
       case "events":
-        return <EventView />;
+        return <EventView userDetail={userDetail} />;
       case "wallet":
-        return <WalletView />;
+        return <WalletView userDetail={userDetail} />;
     }
   };
 
   const toggleTribeModal = () => {
     setTribeOpen(!tribeOpen);
   };
+
+  useEffect(() => {
+    if (authToken && id && menuOption) {
+      dispatch(getAccountInfo({token: authToken, id, infoType: menuOption}))
+    }
+  }, [menuOption]);
+
+  console.log({userDetail})
+  /**
+   *
+   * */
 
   return (
     <MainLayout>
@@ -71,21 +98,21 @@ function UserDetailsPage({}) {
               <p className={"text-text-grey text-[12px] font-medium"}>Full name:</p>
             </div>
             <div className={"flex gap-[4px]"}>
-              <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+              <p className={"text-[14px] font-medium"}>{user?.fullname}</p>
             </div>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>User ID:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>LN112332</p>
+            <p className={"text-[14px] font-medium"}>{user?.lemon_id}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Account Plan:</p>
             </div>
             <div className={"flex gap-[4px]"}>
-              <p className={"text-[14px] font-medium"}>Membership</p>
+              <p className={"text-[14px] font-medium"}>{user?.account_plan}</p>
               <p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View history</p>
             </div>
           </div>
@@ -93,41 +120,41 @@ function UserDetailsPage({}) {
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
             </div>
-            <p className={"text-[14px] font-medium text-light-green-70"}>Successful</p>
+            <p className={"text-[14px] font-medium text-light-green-70"}>{user?.status}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Email Address:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>adebayo@gmail.com</p>
+            <p className={"text-[14px] font-medium"}>{user?.email}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Username:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>adebayo</p>
+            <p className={"text-[14px] font-medium"}>{user?.username}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Lemonade Tag:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>Lemon 23</p>
+            <p className={"text-[14px] font-medium"}>{user?.lemon_id}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Date Joined:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+            <p className={"text-[14px] font-medium"}>{user?.date_joined}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Location:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>23, Adeniyi Jones, Ikeja, Lagos, Nigeria</p>
+            <p className={"text-[14px] font-medium"}>{user?.location}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
-              <p className={"text-text-grey text-[12px] font-medium"}>Socail Links:</p>
+              <p className={"text-text-grey text-[12px] font-medium"}>Social Links:</p>
             </div>
             <p className={"text-[14px] font-medium"}>Links here</p>
           </div>
@@ -135,37 +162,37 @@ function UserDetailsPage({}) {
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Referrals:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>230</p>
+            <p className={"text-[14px] font-medium"}>{user?.referrals}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Tribes Joined:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>5</p>
+            <p className={"text-[14px] font-medium"}>{user?.tribes_joined}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Tribes created:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>5</p>
+            <p className={"text-[14px] font-medium"}>{user?.tribes_created}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Threads Created:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>5</p>
+            <p className={"text-[14px] font-medium"}>{user?.threads_created}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Business:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>Sumark technologies</p>
+            <p className={"text-[14px] font-medium"}>{user?.business}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
               <p className={"text-text-grey text-[12px] font-medium"}>Event Created:</p>
             </div>
-            <p className={"text-[14px] font-medium"}>200</p>
+            <p className={"text-[14px] font-medium"}>{user?.events_created}</p>
           </div>
         </div>
         <div className={"flex flex-col"}>

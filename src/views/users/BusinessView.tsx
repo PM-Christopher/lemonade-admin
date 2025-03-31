@@ -2,7 +2,7 @@ import React from 'react';
 import Image from "next/image";
 import RocketGreenIcon from "@/icons/rocketIconGreen.svg"
 
-const BusinessView = ({}) => {
+const BusinessView = ({userDetail}: any) => {
     return (
         <div className="flex flex-col p-[24px] gap-[24px]">
             <div

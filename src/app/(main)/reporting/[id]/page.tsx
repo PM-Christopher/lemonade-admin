@@ -1,7 +1,26 @@
-import React from 'react';
+'use client'
+import React, {useEffect} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getWalletDetail} from "@/features/wallet/wallet.slice";
+import {getReportDetail} from "@/features/reporting/reporting.slice";
+import {capitalizeWords, GetStatusClass} from "@/utils/helper";
 
 function ReportDetailsPage() {
+    const params = useParams()
+    const dispatch  = useDispatch<AppDispatch>()
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+    const { loading, report } = useSelector((state: RootState) => state.report) as { report: any, loading: boolean };
+
+    useEffect(() => {
+        if (id && authToken) {
+            dispatch(getReportDetail({token: authToken, id}))
+        }
+    }, [id])
+
     return (
         <MainLayout>
             <section className={"p-[20px] flex justify-between"}>
@@ -12,7 +31,7 @@ function ReportDetailsPage() {
                                 <p className={"text-text-grey text-[12px] font-medium"}>Reported By:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+                                <p className={"text-[14px] font-medium"}>{report?.reported_by?.name}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
@@ -25,27 +44,27 @@ function ReportDetailsPage() {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Category:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>Thread</p>
+                            <p className={"text-[14px] font-medium"}>{report?.category}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Case:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>Abuse & Harassment</p>
+                                <p className={"text-[14px] font-medium"}>{report?.case}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Date Submitted:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+                            <p className={"text-[14px] font-medium"}>{report?.date_submitted}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
                             </div>
-                            <p className={"text-[14px] font-medium text-warning-bold"}>Pending</p>
+                            <p className={"text-[14px] font-medium text-warning-bold"}>{capitalizeWords(report?.status)}</p>
                         </div>
                     </div>
                     <div className={'p-[24px]'}>

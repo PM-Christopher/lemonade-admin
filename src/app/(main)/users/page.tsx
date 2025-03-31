@@ -1,14 +1,21 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {CalendarIcon, ChevronDown, SearchIcon, UploadIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {usersPageViews} from "@/utils/pageViews";
 import UsersViews from "@/views/users/UsersView";
 import AffiliateView from '@/views/users/AffiliateView';
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getUserData} from "@/features/user/user.slice";
 
 function UsersPage({}) {
     const [menuOption, setMenuOption] = useState("users");
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { userData } = useSelector((state: RootState) => state.user) as {userData: any}
 
     const switchOption = (option: string) => {
         setMenuOption(option)
@@ -17,15 +24,21 @@ function UsersPage({}) {
     const renderViews = () => {
         switch (menuOption) {
             case "users":
-                return <UsersViews />;
+                return <UsersViews userData={userData} />;
             case "affiliate":
                 return <AffiliateView />;
         }
     }
 
+    useEffect(() => {
+        if (authToken && menuOption) {
+            dispatch(getUserData({token: authToken, trxType: menuOption}))
+        }
+    }, [menuOption])
+
     return (
         <MainLayout>
-            <section className="flex flex-col gap-[20px]">
+            <section className="flex flex-col gap-[20px] mt-[20px]">
                 <div className={"px-[20px] flex justify-between"}>
                     <p className={"text-[16px] font-semiBold"}>10,000 users</p>
                     <div className={"flex justify-between gap-[12px]"}>

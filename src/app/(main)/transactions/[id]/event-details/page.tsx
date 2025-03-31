@@ -1,11 +1,27 @@
-import React from 'react';
+"use client"
+import React, {useEffect} from 'react';
 import {PrinterIcon} from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getEventDetail} from "@/features/transaction/transaction.slice";
+import {capitalizeWords} from "@/utils/helper";
 
 function EventDetailsPage({}) {
     const currentPage:number = 1
     const totalPages: number = 10
+    const params = useParams()
+    const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+    const dispatch  = useDispatch<AppDispatch>()
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { loading, event } = useSelector((state: RootState) => state.transaction) as { event: any, loading: boolean }
 
+    useEffect(() => {
+        if (authToken && id) {
+            dispatch(getEventDetail({token: authToken, id}))
+        }
+    }, [])
     return (
         <MainLayout>
             <section className={"p-[20px] flex justify-between"}>
@@ -15,7 +31,7 @@ function EventDetailsPage({}) {
                             <p className={"text-text-grey text-[12px] font-medium"}>Event name:</p>
                         </div>
                         <div className={"flex gap-[4px]"}>
-                            <p className={"text-[14px] font-medium"}>Unlocking business potentials</p>
+                            <p className={"text-[14px] font-medium"}>{event?.info?.event_name}</p>
                             {/*<p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View business</p>*/}
                         </div>
                     </div>
@@ -24,7 +40,7 @@ function EventDetailsPage({}) {
                             <p className={"text-text-grey text-[12px] font-medium"}>Event owner:</p>
                         </div>
                         <div className={"flex gap-[4px]"}>
-                            <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+                            <p className={"text-[14px] font-medium"}>{event?.info?.organizer}</p>
                             <p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View profile</p>
                         </div>
                     </div>
@@ -44,19 +60,19 @@ function EventDetailsPage({}) {
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Tickets sold:</p>
                         </div>
-                        <p className={"text-[14px] font-medium"}>3000</p>
+                        <p className={"text-[14px] font-medium"}>{event?.info?.tickets_sold}</p>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Date paid:</p>
                         </div>
-                        <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+                        <p className={"text-[14px] font-medium"}>{event?.info?.created_at}</p>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
                         </div>
-                        <p className={"text-[14px] font-medium text-light-green-70"}>Successful</p>
+                        <p className={"text-[14px] font-medium text-light-green-70"}>{capitalizeWords(event?.info?.status)}</p>
                     </div>
                 </div>
                 <div className={"flex flex-col"}>

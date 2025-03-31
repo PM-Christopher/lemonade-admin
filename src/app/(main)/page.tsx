@@ -3,6 +3,9 @@ import React, {useEffect, useState} from "react"
 import MainLayout from "@/components/layouts/MainLayout";
 import DataCard from "@/components/global/DataCard";
 import {CalendarIcon, ChevronDown} from "lucide-react";
+import {useDispatch, useSelector, TypedUseSelectorHook} from "react-redux";
+import {getMetrics} from "@/features/dashboard/dashboard.slice";
+import {RootState, AppDispatch} from "@/redux/store";
 
 export default function Home() {
   const data = [
@@ -23,9 +26,21 @@ export default function Home() {
     { title: "Total Boosted Businesses", value: 1000 ,isPrice: false },
     { title: "Total Promoted Events", value: 1000 ,isPrice: false },
   ];
+  const dispatch = useDispatch<AppDispatch>();
+  const { authToken } = useSelector((state: RootState) => state.auth)
+  const { metrics } = useSelector((state: RootState) => state.dashboard)
+
+  console.log({metrics})
+
+  useEffect(() => {
+    if (authToken) {
+        dispatch(getMetrics({ token: authToken }));
+    }
+  }, [])
+
   return (
       <MainLayout>
-        <div className="px-[40px] gap-[20px] flex flex-col">
+        <div className="px-[40px] gap-[20px] flex flex-col mt-[20px]">
           <div className={"flex border-[1px] border-grey-20 bg-none w-fit px-[16px] py-[10px] rounded-[12px] gap-[30px]"}>
             <div className={'flex gap-2 items-center'}>
               <CalendarIcon className={"text-text-grey"}/>

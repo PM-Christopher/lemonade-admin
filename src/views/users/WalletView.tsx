@@ -1,7 +1,7 @@
 import React, {useRef, useEffect, MouseEvent} from 'react';
 import {CalendarIcon, ChevronDown, ChevronRight} from "lucide-react";
 
-const WalletView = ({}) => {
+const WalletView = ({userDetail}: any) => {
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 

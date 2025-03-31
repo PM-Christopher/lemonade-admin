@@ -1,16 +1,15 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {axiosInstance} from "@/lib/axiosInstane";
+import {UserInterface} from "@/interfaces/SystemInterface";
 
 interface authState {
-    user: {} | null;
+    user: UserInterface | null;
     loading: boolean;
     error: boolean;
     authToken: string | null;
     admin: any;
     adminToken: string | null;
     isLoggedIn: boolean;
-    subscription: {} | null,
-    subscription_id: number | null,
     plan: {} | null,
     appSettings: {} | null
 }
@@ -23,8 +22,6 @@ const initialState: authState = {
     error: false,
     authToken: null,
     isLoggedIn: false,
-    subscription: null,
-    subscription_id: null,
     plan: null,
     appSettings: null
 };
@@ -128,10 +125,9 @@ const authSlice = createSlice({
         authSuccess: (state, action) => {
             state.loading = false;
             state.error = false;
-            state.user = action.payload.user;
+            state.user = action.payload.admin;
             state.authToken = action.payload.token;
             state.isLoggedIn = true;
-            state.subscription = action.payload.subscription
         },
         loadStop: (state) => {
             state.loading = false;
@@ -154,13 +150,10 @@ const authSlice = createSlice({
             state.user = action.payload.user;
         },
         updateHasPin: (state) => {
-            state.user = { ...state.user, hasPin: true };
         },
         updateProfileImage: (state, action) => {
-            state.user = { ...state.user, profile_image: action.payload };
         },
         updateCreatedAccount: (state) => {
-            state.user = { ...state.user, createdAccount: true };
         },
         adminUser: (state, action) => {
             state.loading = false;
@@ -171,7 +164,6 @@ const authSlice = createSlice({
             state.user = { ...state.user, ...action.payload };
         },
         setSubscriptionId: (state, action) => {
-            state.subscription_id = action.payload.id;
             state.plan = action.payload.plan
         },
     },
@@ -230,7 +222,6 @@ const authSlice = createSlice({
             state.user = null;
             state.authToken = null;
             state.isLoggedIn = false;
-            state.subscription = null
         });
         builder.addCase(logout.rejected, (state) => {
             state.loading = false;

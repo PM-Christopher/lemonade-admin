@@ -1,14 +1,21 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AffiliateView from "@/views/events/AffiliateView";
 import { CalendarIcon, ChevronDown, SearchIcon } from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { eventViews } from "@/utils/pageViews";
 import EventView from "@/views/events/EventView";
 import PromotionView from "@/views/tribes/PromotionView";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getEventData} from "@/features/events/event.slice";
 
 const EventsPage = () => {
     const [menuOption, setMenuOption] = useState("events");
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { eventData } = useSelector((state: RootState) => state.event) as {eventData: any}
 
     const switchOption = (option: string) => {
         setMenuOption(option)
@@ -17,15 +24,23 @@ const EventsPage = () => {
     const renderViews = () => {
         switch (menuOption) {
             case "events":
-                return <EventView />
+                return <EventView pageData={eventData} />
             case "affiliates":
-                return <AffiliateView />
+                return <AffiliateView pageData={eventData} />
             case "promotions":
-                return <PromotionView />
+                return <PromotionView pageData={eventData} />
             default:
                 return <></>
         }
     }
+
+    useEffect(() => {
+        if (authToken && menuOption) {
+            dispatch(getEventData({token: authToken, trxType: menuOption}))
+        }
+    }, [menuOption])
+
+
     return (
         <MainLayout>
             <section className="flex flex-col gap-[20px] mt-[24px]">

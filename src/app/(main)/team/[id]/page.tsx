@@ -1,11 +1,31 @@
-import React from 'react';
+'use client'
+import React, {useEffect} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {usersDetailPageViews} from "@/utils/pageViews";
 import {CalendarIcon, ChevronDown} from "lucide-react";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getAnnouncementDetail} from "@/features/announcements/announcements.slice";
+import {getTeamDetail} from "@/features/team/team.slice";
+import {capitalizeSpecial, capitalizeWords} from "@/utils/helper";
 
 function Page() {
     const currentPage: number = 1;
     const totalPages: number = 10;
+    const params = useParams()
+    const dispatch  = useDispatch<AppDispatch>()
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+    const { loading, team } = useSelector((state: RootState) => state.team) as { team: any, loading: boolean };
+
+    useEffect(() => {
+        if (id && authToken) {
+            dispatch(getTeamDetail({token: authToken, id}))
+        }
+    }, [id])
+
+    console.log({team})
     return (
         <MainLayout>
             <section className={"p-[20px] flex justify-between"}>
@@ -17,7 +37,7 @@ function Page() {
                                 <div className={"w-[115px]"}>
                                     <p className={"text-text-grey text-[12px] font-medium"}>Full Name:</p>
                                 </div>
-                                <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+                                <p className={"text-[14px] font-medium"}>{team?.name}</p>
                             </div>
                             <div className={"flex gap-[24px] items-center-center"}>
                                 <div className={"w-[115px]"}>
@@ -29,14 +49,14 @@ function Page() {
                                 <div className={"w-[115px]"}>
                                     <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
                                 </div>
-                                <p className={"text-[14px] font-medium  text-light-green-70"}>Active</p>
+                                <p className={"text-[14px] font-medium  text-light-green-70"}>{capitalizeWords(team?.status)}</p>
                             </div>
                             <div className={"flex gap-[24px] items-center-center"}>
                                 <div className={"w-[115px]"}>
                                     <p className={"text-text-grey text-[12px] font-medium"}>Role:</p>
                                 </div>
                                 <div className={"flex gap-[4px]"}>
-                                    <p className={"text-[14px] font-medium"}>Customer support</p>
+                                    <p className={"text-[14px] font-medium"}>{capitalizeSpecial(team?.role)}</p>
                                 </div>
                             </div>
                             <div className={"flex gap-[24px] items-center-center"}>
@@ -44,14 +64,14 @@ function Page() {
                                     <p className={"text-text-grey text-[12px] font-medium"}>Email Address:</p>
                                 </div>
                                 <div className={"flex gap-[4px]"}>
-                                    <p className={"text-[14px] font-medium"}>adebayoadetoye@gmail.com</p>
+                                    <p className={"text-[14px] font-medium"}>{team?.email}</p>
                                 </div>
                             </div>
                             <div className={"flex gap-[24px] items-center-center"}>
                                 <div className={"w-[115px]"}>
                                     <p className={"text-text-grey text-[12px] font-medium"}>Date Address:</p>
                                 </div>
-                                <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+                                <p className={"text-[14px] font-medium"}>{team?.created_at}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center justify-between p-[24px] mt-[20px] border-t-[1px] border-t-grey-20"}>

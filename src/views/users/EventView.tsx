@@ -3,10 +3,10 @@ import {CalendarIcon, ChevronDown, Dot, DotIcon} from "lucide-react";
 import Image from "next/image";
 
 interface EventViewProps {
-
+    userDetail: any;
 }
 
-const EventView: React.FC = ({}) => {
+const EventView: React.FC<EventViewProps> = ({userDetail}) => {
     return (
         <div className="flex flex-col gap-[24px]">
             <div className={"px-[24px] pt-[24px] p-[16px]"}>

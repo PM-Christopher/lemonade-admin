@@ -1,11 +1,42 @@
-import React from 'react';
+'use client'
+import React, {useEffect, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {CalendarIcon, ChevronDown, SearchIcon} from "lucide-react";
-import {eventViews} from "@/utils/pageViews";
-import {reportData, reportHeaders} from "@/data/tableData";
-import GlobalTable from "@/components/global/GlobalTable";
+import { reportHeaders } from "@/data/tableData";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import { getReportData } from "@/features/reporting/reporting.slice";
+import {capitalizeWords} from "@/utils/helper";
+import PaginationComp from "@/components/global/Pagination";
+import {useRouter} from "next/navigation";
 
 function ReportingPage({}) {
+    const router = useRouter()
+    // State for current page and items per page
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { reportData } = useSelector((state: RootState) => state.report) as {reportData: any}
+
+    // Calculate total pages based on the data length and perPage value
+    const totalPages = Math.ceil(reportData?.reports?.length / perPage);
+
+    // Determine the start and end indices for slicing the data array
+    const startIndex = (currentPage - 1) * perPage;
+    const paginatedData = reportData?.reports?.slice(startIndex, startIndex + perPage)
+
+    useEffect(() => {
+        if (authToken) {
+            dispatch(getReportData({token: authToken}))
+        }
+    }, [])
     return (
         <MainLayout>
             <section className="flex flex-col gap-[20px] mt-[24px]">
@@ -47,7 +78,63 @@ function ReportingPage({}) {
                 </div>
                 <div className={"px-[20px] flex flex-col "}>
                     <div className={"border-[1px] border-grey-20 rounded-[12px] flex flex-col"}>
-                        <GlobalTable headers={reportHeaders} content={reportData}/>
+                        {/*<GlobalTable headers={reportHeaders} content={reportData}/>*/}
+                        <div className="bg-white shadow-md rounded-lg">
+                            <table className="min-w-full table-auto border-collapse">
+                                <thead>
+                                <tr className="bg-mid-grey">
+                                    {reportHeaders.map((header, idx) => (
+                                        <th
+                                            className="p-4 text-left text-[12px] text-text-grey font-semiBold"
+                                            key={idx}
+                                        >
+                                            {header}
+                                        </th>
+                                    ))}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    paginatedData && paginatedData.length > 0 ? paginatedData.map((row:any, index: any) => (
+                                        <tr key={index} className="border-b border-grey-20 h-[72px] cursor-pointer" onClick={() => router.push(`/reporting/${row.id}`)}>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {row.id}
+                                            </td>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {row.reported_by.name}
+                                            </td>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {row.category}
+                                            </td>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {row.case}
+                                            </td>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {row.date_submitted}
+                                            </td>
+                                            <td className={'p-4 font-medium text-sm font-sans'}>
+                                                {capitalizeWords(row.status)}
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={reportHeaders.length} className="p-4 text-center text-sm text-gray-500">
+                                                No data available
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                                </tbody>
+                            </table>
+
+                            {/* Pagination */}
+                            <PaginationComp
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                perPage={perPage}
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

@@ -21,6 +21,7 @@ const GlobalTable: React.FC<TableProps> = ({
         let color;
         switch (status) {
             case "Pending":
+            case "pending":
             case "Draft":
                 color = "text-warning-bold"; // Text color for Pending
                 break;
@@ -61,31 +62,40 @@ const GlobalTable: React.FC<TableProps> = ({
                 </tr>
                 </thead>
                 <tbody>
-                {content.map((row, index) => (
-                    <tr key={index} className="border-b border-grey-20 h-[72px]">
-                        {Object.keys(row).map((key, cellIdx) => (
-                            <td
-                                className={`p-4 font-medium text-sm font-sans ${
-                                    key === 'status' || 'STATUS' ? getStatusClass(row[key]) : ''
-                                }`}
-                                key={cellIdx}
-                            >
-                                {key === 'avatar' ? (
-                                    <div className="flex items-center gap-2">
-                                        <img
-                                            src={row[key] || 'https://via.placeholder.com/40'}
-                                            alt="avatar"
-                                            className="w-8 h-8 rounded-full"
-                                        />
-                                        {row.fullName}
-                                    </div>
-                                ) : (
-                                    row[key]
-                                )}
+                {
+                    content.length > 0 ? content.map((row, index) => (
+                        <tr key={index} className="border-b border-grey-20 h-[72px]">
+                            {Object.keys(row).map((key, cellIdx) => (
+                                <td
+                                    className={`p-4 font-medium text-sm font-sans ${
+                                        key === 'status' || 'STATUS' ? getStatusClass(row[key]) : ''
+                                    }`}
+                                    key={cellIdx}
+                                >
+                                    {key === 'avatar' ? (
+                                        <div className="flex items-center gap-2">
+                                            <img
+                                                src={row[key] || 'https://via.placeholder.com/40'}
+                                                alt="avatar"
+                                                className="w-8 h-8 rounded-full"
+                                            />
+                                            {row.fullName}
+                                        </div>
+                                    ) : (
+                                        row[key]
+                                    )}
+                                </td>
+                            ))
+                            }
+                        </tr>
+                    )) : (
+                        <tr>
+                            <td colSpan={headers.length} className="p-4 text-center text-sm text-gray-500">
+                                No data available
                             </td>
-                        ))}
-                    </tr>
-                ))}
+                        </tr>
+                    )
+                }
                 </tbody>
             </table>
 

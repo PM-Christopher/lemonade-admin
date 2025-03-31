@@ -1,9 +1,8 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {CalendarIcon, ChevronDown, SearchIcon, UploadIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {walletMgtData, walletMgtHeaders} from "@/data/tableData";
 import {transactionPageViews} from "@/utils/pageViews";
 import PlansViews from "@/views/transactions/PlansViews";
 import WalletViews from "@/views/transactions/walletViews";
@@ -11,26 +10,39 @@ import BoostingViews from "@/views/transactions/boostingViews";
 import ServiceViews from "@/views/transactions/serviceViews";
 import EventViews from "@/views/transactions/eventViews";
 import PromotionViews from "@/views/transactions/promotionViews";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getPlanSubscriptions, getTransactionData} from "@/features/transaction/transaction.slice";
 
 function TransactionsPage({}) {
     const [menuOption, setMenuOption] = useState("plan-subscriptions");
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { trxData } = useSelector((state: RootState) => state.transaction)
 
     const switchOption = (option: string) => {
         setMenuOption(option)
     }
 
+    useEffect(() => {
+        if (menuOption && authToken) {
+            dispatch(getTransactionData({token: authToken, trxType: menuOption}))
+        }
+    }, [menuOption])
+
     const renderViews = () => {
         switch (menuOption) {
             case "plan-subscriptions":
-                return <PlansViews />;
+                return <PlansViews trx_data={trxData} />;
             case "wallet-withdrawals":
-                return <WalletViews />;
+                return <WalletViews trx_data={trxData} />;
             case "boosting":
                 return <BoostingViews />
             case "services":
                 return <ServiceViews />
             case "events":
-                return <EventViews />
+                return <EventViews trx_data={trxData} />
             case "promotions":
                 return <PromotionViews />
         }
@@ -38,7 +50,7 @@ function TransactionsPage({}) {
 
     return (
         <MainLayout>
-            <section className="flex flex-col gap-[20px]">
+            <section className="flex flex-col gap-[20px] mt-[20px]">
                 <div className={"px-[20px] flex justify-between"}>
                     <p className={"text-[16px] font-semiBold"}>10,000 Transactions</p>
                     <div className={"flex justify-between gap-[12px]"}>

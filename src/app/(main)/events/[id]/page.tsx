@@ -1,18 +1,35 @@
-import React from 'react';
+'use client'
+import React, {useEffect} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {
     CalendarIcon,
     ChevronDown,
     ChevronRight,
     ClockIcon,
-    MapIcon,
     MapPinIcon,
-    MessageCircleMore,
-    PinIcon
 } from "lucide-react";
-import {usersDetailPageViews} from "@/utils/pageViews";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getEventDetail} from "@/features/events/event.slice";
+import {capitalizeWords} from "@/utils/helper";
+import Image from "next/image";
 
 const Page = ({}) => {
+    const params = useParams()
+    const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+    const dispatch  = useDispatch<AppDispatch>()
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { loading, event } = useSelector((state: RootState) => state.event) as {  loading: boolean, event: any }
+
+    useEffect(() => {
+        if (authToken && id) {
+            dispatch(getEventDetail({token: authToken, id}))
+        }
+    }, [])
+
+    console.log({event})
+
     return (
         <MainLayout>
             <section className={"p-[20px] flex justify-between"}>
@@ -30,7 +47,9 @@ const Page = ({}) => {
                                 <p className={"text-text-grey text-[12px] font-medium"}>Event Owner:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+                                <p className={"text-[14px] font-medium"}>
+                                    {event?.event?.owner?.fullname}
+                                </p>
                                 <p className={"text-[14px] font-medium text-light-green"}>View profile</p>
                             </div>
                         </div>
@@ -44,21 +63,21 @@ const Page = ({}) => {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Event Status:</p>
                             </div>
-                            <p className={"text-[14px] font-medium text-light-green-70"}>Completed</p>
+                            <p className={"text-[14px] font-medium text-light-green-70"}>{event?.event?.status}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Date Created:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>24 Apr, 2024 09:45 PM</p>
+                                <p className={"text-[14px] font-medium"}>{event?.event?.created_at}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Event Category:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>Culture & tourism</p>
+                            <p className={"text-[14px] font-medium"}>{event?.event?.category}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
@@ -70,19 +89,19 @@ const Page = ({}) => {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Account Number:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>0923432934</p>
+                            <p className={"text-[14px] font-medium"}>{event?.event?.account?.account_number}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Account Holder:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>Funmilayo Johnson</p>
+                            <p className={"text-[14px] font-medium"}>{event?.event?.account?.name}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Bank Name:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>GTB</p>
+                            <p className={"text-[14px] font-medium"}>{event?.event?.account?.bank}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
@@ -94,113 +113,98 @@ const Page = ({}) => {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Ticket Class:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>3</p>
+                            <p className={"text-[14px] font-medium"}>{event?.tickets.length}</p>
                         </div>
-                        <div className={"flex flex-col p-[12px] rounded-[12px] gap-[8px] bg-light-grey"}>
-                            <p className={'font-semiBold text-[16px]'}>Free</p>
-                            <p className={'font-normal text-[12px] text-light-black'}>Give you access to front row
-                                seats</p>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Price:</p>
+                        {
+                            event?.tickets.map((ticket: any, index: any) => (
+                                <div className={"flex flex-col p-[12px] rounded-[12px] gap-[8px] bg-light-grey"} key={index}>
+                                    <p className={'font-semiBold text-[16px]'}>
+                                        {capitalizeWords(ticket?.ticket_type)}
+                                    </p>
+                                    <p className={'font-normal text-[12px] text-light-black'}>
+                                        {ticket?.description}
+                                    </p>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Price:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>
+                                            {ticket?.price === 0 ? '-' : ticket?.price}
+                                        </p>
+                                    </div>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Ticket Stock:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>{capitalizeWords(ticket?.stock_type)}</p>
+                                    </div>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Purchase Limit:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>
+                                            {ticket?.purchase_limit}
+                                        </p>
+                                    </div>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Tickets Sold:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>
+                                            {ticket?.tickets_sold}
+                                        </p>
+                                    </div>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Sales Revenue:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>
+                                            {ticket?.sales_revenue === 0 ? '-' : ticket?.sales_revenue}
+                                        </p>
+                                    </div>
+                                    <div className={"flex gap-[24px] items-center-center"}>
+                                        <div className={"w-[115px]"}>
+                                            <p className={"text-text-grey text-[12px] font-medium"}>Check-Ins:</p>
+                                        </div>
+                                        <p className={"text-[14px] font-medium"}>
+                                            {ticket?.check_ins}
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className={"text-[14px] font-medium"}>-</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Ticket Stock:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>Unlimited</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Purchase Limit:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>5</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Tickets Sold:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>34</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Sales Revenue:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>-</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Check-Ins:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>20</p>
-                            </div>
-                        </div>
-                        <div className={"flex flex-col p-[12px] rounded-[12px] gap-[8px] bg-light-grey"}>
-                            <p className={'font-semiBold text-[16px]'}>Free</p>
-                            <p className={'font-normal text-[12px] text-light-black'}>Give you access to front row
-                                seats</p>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Price:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>-</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Ticket Stock:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>Unlimited</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Purchase Limit:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>5</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Tickets Sold:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>34</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Sales Revenue:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>-</p>
-                            </div>
-                            <div className={"flex gap-[24px] items-center-center"}>
-                                <div className={"w-[115px]"}>
-                                    <p className={"text-text-grey text-[12px] font-medium"}>Check-Ins:</p>
-                                </div>
-                                <p className={"text-[14px] font-medium"}>20</p>
-                            </div>
-                        </div>
+                            ))
+                        }
                     </div>
                 </div>
                 <div className={"w-[780px] h-fit bg-white rounded-tr-[12px] rounded-tl-[12px] flex flex-col p-[24px] gap-[16px]"}>
-                    <div className={'w-[320px] h-[343px] bg-gray-600 rounded-[16px]'}></div>
-                    <p className={"font-semiBold text-[20px]"}>Unlocking business potentials</p>
+                    <Image src={event?.event?.event_image} alt={event?.event?.event_name} width={320} height={343} className={'w-[320px] h-[343px] rounded-[16px]'} />
+                    <p className={"font-semiBold text-[20px]"}>
+                        {event?.event?.event_name}
+                    </p>
                     <div className={"flex flex-col gap-[8px]"}>
                         <div className={'flex items-center gap-[8px]'}>
                             <CalendarIcon className={"text-text-grey"}/>
-                            <p className={"font-medium text-[14px] text-text-grey"}>Mon, 23 Mar - Mon 23 Mar</p>
+                            <p className={"font-medium text-[14px] text-text-grey"}>
+                                {event?.event?.event_date}
+                            </p>
                         </div>
                         <div className={'flex items-center gap-[8px]'}>
                             <ClockIcon className={"text-text-grey"}/>
-                            <p className={"font-medium text-[14px] text-text-grey"}>04:00PM - 11:00PM</p>
+                            <p className={"font-medium text-[14px] text-text-grey"}>
+                                {event?.event?.event_time}
+                            </p>
                         </div>
                         <div className={'flex items-center gap-[8px]'}>
                             <MapPinIcon className={"text-text-grey"}/>
-                            <p className={"font-medium text-[14px] text-text-grey"}>Lekki phase 1</p>
+                            <p className={"font-medium text-[14px] text-text-grey"}>
+                                {event?.event?.location}
+                            </p>
                         </div>
                     </div>
                     <p className={'font-semiBold text-[16px]'}>Contact Us</p>
                     <p className={'font-semiBold text-[16px]'}>About Event</p>
-                    <p className={'font-normal text-[14px] text-text-grey'}>This is the content of the message for the
-                        event you are seeing here</p>
+                    <p className={'font-normal text-[14px] text-text-grey'}>
+                        {event?.event?.description}
+                    </p>
                     <p className={'font-semiBold text-[16px]'}>Promotions</p>
                     <div className={'flex flex-wrap gap-[12px]'}>
                         <div

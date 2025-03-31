@@ -1,17 +1,34 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {ChevronDown, ChevronRight, PrinterIcon} from "lucide-react";
+import {useParams} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getPlanSubscription} from "@/features/transaction/transaction.slice";
+import {capitalizeWords} from "@/utils/helper";
 
 function SubscriptionDetailsPage({}) {
     const currentPage:number = 1
     const totalPages: number = 10
+    const params = useParams()
+    const dispatch  = useDispatch<AppDispatch>()
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { loading, subscription } = useSelector((state: RootState) => state.transaction) as { subscription: any, loading: boolean }
 
     const paymentHistoryData = [
         {id: "TX123234", title: "Lemonade-Premium", date: "04 Apr, 2024", price: "N23,000"},
         {id: "TX123234", title: "Lemonade-Premium", date: "04 Apr, 2024", price: "N23,000"},
         {id: "TX123234", title: "Lemonade-Premium", date: "04 Apr, 2024", price: "N23,000"},
     ]
+
+    const id = params.id ? (Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id)) : undefined;
+
+    useEffect(() => {
+        if (authToken && id) {
+            dispatch(getPlanSubscription({token: authToken, id}))
+        }
+    }, [])
 
     return (
         <MainLayout>
@@ -22,7 +39,7 @@ function SubscriptionDetailsPage({}) {
                             <p className={"text-text-grey text-[12px] font-medium"}>Full name:</p>
                         </div>
                         <div className={"flex gap-[4px]"}>
-                            <p className={"text-[14px] font-medium"}>Adebayo Salami</p>
+                            <p className={"text-[14px] font-medium"}>{subscription?.info?.fullname}</p>
                             <p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View profile</p>
                         </div>
                     </div>
@@ -30,19 +47,19 @@ function SubscriptionDetailsPage({}) {
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Transaction Id:</p>
                         </div>
-                        <p className={"text-[14px] font-medium"}>TX112332</p>
+                        <p className={"text-[14px] font-medium"}>{subscription?.info?.txn_id}</p>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Account Plan:</p>
                         </div>
-                        <p className={"text-[14px] font-medium"}>Membership</p>
+                        <p className={"text-[14px] font-medium"}>{subscription?.info?.plan}</p>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Amount:</p>
                         </div>
-                        <p className={"text-[14px] font-medium"}>N50,000</p>
+                        <p className={"text-[14px] font-medium"}>N{subscription?.info?.amount}</p>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
@@ -60,7 +77,7 @@ function SubscriptionDetailsPage({}) {
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
                         </div>
-                        <p className={"text-[14px] font-medium text-light-green-70"}>Successful</p>
+                        <p className={"text-[14px] font-medium text-light-green-70"}>{capitalizeWords(subscription?.info?.status)}</p>
                     </div>
                 </div>
                 <div className={"flex flex-col"}>
@@ -78,19 +95,20 @@ function SubscriptionDetailsPage({}) {
                             <div
                                 className={'flex flex-col px-[24px] py-[32px] gap-[10px] border-b-[5px] border-b-step-color bg-green-tint rounded-[12px]'}>
                                 <p className={"text-mid-green font-semiBold text-[16px]"}>PREMIUM</p>
-                                <p className={"font-bold text-[24px]"}>₦23,000/Yr</p>
-                                <p className={"p-[8px] rounded-[8px] bg-light-green-50 text-[14px] w-fit"}>Renews May
-                                    05, 2025</p>
+                                <p className={"font-bold text-[24px]"}>₦{subscription?.plan?.cost}</p>
+                                <p className={"p-[8px] rounded-[8px] bg-light-green-50 text-[14px] w-fit"}>
+                                    Renews {subscription?.plan?.renews}
+                                </p>
                             </div>
                             <div className={"gap-[16px]"}>
                                 <p className={"font-semiBold text-[14px]"}>Payment history</p>
                                 {
-                                    paymentHistoryData.map((item, index) => (
+                                    subscription?.history.map((item: any, index: number) => (
                                         <div className={'flex justify-between py-[16px] px-[12px]'} key={index}>
-                                            <p className={"text-[16px] font-normal text-light-black"}>{item.id}</p>
-                                            <p className={"text-[16px] font-semiBold text-light-black"}>{item.title}</p>
-                                            <p className={"text-[16px] font-normal text-light-black"}>{item.date}</p>
-                                            <p className={"text-[16px] font-normal text-light-black"}>{item.price}</p>
+                                            <p className={"text-[16px] font-normal text-light-black"}>{item.txn_id}</p>
+                                            <p className={"text-[16px] font-semiBold text-light-black"}>{item.plan}</p>
+                                            <p className={"text-[16px] font-normal text-light-black"}>{item?.created_at}</p>
+                                            <p className={"text-[16px] font-normal text-light-black"}>N {item?.amount}</p>
                                         </div>
                                     ))
                                 }

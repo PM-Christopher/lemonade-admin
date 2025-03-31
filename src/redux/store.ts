@@ -6,6 +6,14 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "@/features/authentication/authSlice";
 import tempReducer from "./tempSlice";
 import toastifyReducer from "./toastifySlice"
+import dashboardReducer from "@/features/dashboard/dashboard.slice"
+import walletReducer from "@/features/wallet/wallet.slice"
+import transactionReducer from "@/features/transaction/transaction.slice"
+import userReducer from "@/features/user/user.slice"
+import eventReducer from "@/features/events/event.slice"
+import reportReducer from "@/features/reporting/reporting.slice"
+import announcementReducer from "@/features/announcements/announcements.slice"
+import teamReducer from "@/features/team/team.slice"
 
 const persistConfig = {
     key: "root",
@@ -17,6 +25,14 @@ const reducers = combineReducers({
     auth: authReducer,
     temp: tempReducer,
     toast: toastifyReducer,
+    dashboard: dashboardReducer,
+    wallet: walletReducer,
+    transaction: transactionReducer,
+    user: userReducer,
+    event: eventReducer,
+    report: reportReducer,
+    announcement: announcementReducer,
+    team: teamReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);
