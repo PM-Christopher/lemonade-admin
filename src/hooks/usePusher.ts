@@ -3,7 +3,6 @@ import { pusherCon, pusherConfig } from "@/config/pusherConfig";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import {addToMessages} from "@/features/connect/connect.slice";
 
 export const usePusher = (channelName: string, eventName: string) => {
     const [cookies, setCookie, removeCookie] = useCookies(["token"]);
@@ -28,7 +27,6 @@ export const usePusher = (channelName: string, eventName: string) => {
         const eventHandler = (receivedData: any) => {
             setData(receivedData);
             if(channelName === "chat-channel") {
-                dispatch(addToMessages({message: receivedData.message, user}))
             }
         };
 
