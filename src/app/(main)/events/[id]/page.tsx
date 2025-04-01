@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {
     CalendarIcon,
@@ -11,9 +11,11 @@ import {
 import {useParams} from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
-import {getEventDetail} from "@/features/events/event.slice";
+import {eventAction, getEventDetail} from "@/features/events/event.slice";
 import {capitalizeWords} from "@/utils/helper";
 import Image from "next/image";
+import SuspendModal from "@/modals/events/SuspendModal";
+import DeleteModal from "@/modals/events/DeleteModal";
 
 const Page = ({}) => {
     const params = useParams()
@@ -21,6 +23,31 @@ const Page = ({}) => {
     const dispatch  = useDispatch<AppDispatch>()
     const { authToken } = useSelector((state: RootState) => state.auth)
     const { loading, event } = useSelector((state: RootState) => state.event) as {  loading: boolean, event: any }
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [suspendModalOpen, setSuspendModalOpen] = useState(false)
+
+    const [dropdownOpen, setDropdownOpen] = React.useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const handleToggleDropdown = () => {
+        setDropdownOpen((prev) => !prev);
+    }
+
+    const handleClickOutside = (event: Event) => {
+        if (
+            containerRef.current &&
+            !containerRef.current.contains(event.target as Node)
+        ) {
+            setDropdownOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside as EventListener)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside as EventListener)
+        }
+    }, []);
 
     useEffect(() => {
         if (authToken && id) {
@@ -28,7 +55,19 @@ const Page = ({}) => {
         }
     }, [])
 
-    console.log({event})
+    const toggleSuspendModalOpen = () => {
+        setSuspendModalOpen(!suspendModalOpen);
+    };
+
+    const toggleDeleteModalOpen = () => {
+        setDeleteModalOpen(!deleteModalOpen);
+    };
+
+    const unsuspendEvent = () => {
+        if (authToken && id) {
+            dispatch(eventAction({token:authToken, id, actionType: "activate"}))
+        }
+    }
 
     return (
         <MainLayout>
@@ -36,10 +75,33 @@ const Page = ({}) => {
                 <div className={"w-[800px] h-fit bg-white flex flex-col rounded-[12px]"}>
                     <div className={'flex justify-between items-center border-b-[1px] p-[24px]'}>
                         <p className={'text-[16px] font-semiBold'}>Event summary</p>
-                        <div className={'border-[1px] border-light-grey-50 p-[10px] px-[14px] flex items-center rounded-[12px] gap-[8px]'}>
-                            <p className={'text-[14px] font-medium'}>Flag event</p>
-                            <ChevronDown />
-                        </div>
+                        {
+                            event?.event?.status !== 'ACTIVE' ? (
+                                <button className={"h-[44px] border-[1px] bg-gradient-green rounded-[12px] w-[156px] text-center"} onClick={unsuspendEvent}>
+                                    <p className={"text-[16px] font-medium text-white"}>Reactivate user</p>
+                                </button>
+                            ) : (
+                                <div className="relative inline-block">
+                                    <div className={'border-[1px] border-light-grey-50 p-[10px] px-[14px] flex items-center rounded-[12px] gap-[8px]'} onClick={handleToggleDropdown}>
+                                        <p className={'text-[14px] font-medium'}>Flag event</p>
+                                        <ChevronDown />
+                                    </div>
+                                    {dropdownOpen && (
+                                        <div
+                                            className="absolute right-0 top-full w-[207px] bg-white rounded-[12px] shadow z-50">
+                                            <ul>
+                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={toggleSuspendModalOpen}>
+                                                    <p className={"font-normal text-[16px]"}>Suspend event</p>
+                                                </li>
+                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={toggleDeleteModalOpen}>
+                                                    <p className={"font-normal text-[16px] text-red-1"}>Delete event</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )
+                        }
                     </div>
                     <div className={'flex flex-col p-[24px] gap-[20px]'}>
                         <div className={"flex gap-[24px] items-center-center"}>
@@ -63,7 +125,7 @@ const Page = ({}) => {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Event Status:</p>
                             </div>
-                            <p className={"text-[14px] font-medium text-light-green-70"}>{event?.event?.status}</p>
+                            <p className={"text-[14px] font-medium text-light-green-70"}>{capitalizeWords(event?.event?.status)}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
@@ -220,6 +282,8 @@ const Page = ({}) => {
                     </div>
                 </div>
             </section>
+            <SuspendModal isOpen={suspendModalOpen} toggle={toggleSuspendModalOpen} id={id} />
+            <DeleteModal isOpen={deleteModalOpen} toggle={toggleDeleteModalOpen} id={id} />
         </MainLayout>
     );
 }

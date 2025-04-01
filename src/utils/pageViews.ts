@@ -1,8 +1,8 @@
 export const transactionPageViews = [
     {key: "plan-subscriptions", title: "Plan subscriptions"},
     {key: "wallet-withdrawals", title: "Wallet withdrawals"},
-    {key: "boosting", title: "Boosting"},
-    {key: "services", title: "Services"},
+    // {key: "boosting", title: "Boosting"},
+    // {key: "services", title: "Services"},
     {key: "events", title: "Events"},
     {key: "promotions", title: "Promotions"},
 ]
@@ -15,7 +15,7 @@ export const usersPageViews = [
 export const usersDetailPageViews = [
     {key: "activities-log", title: "Activities log"},
     {key: "tribes", title: "Tribes"},
-    {key: "business", title: "Business"},
+    // {key: "business", title: "Business"},
     {key: "events", title: "Events"},
     {key: "wallet", title: "Wallet"},
 ]

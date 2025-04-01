@@ -7,13 +7,15 @@ interface eventState {
     error: boolean;
     eventData: {} | null
     event: {} | null
+    eventAction: {} | null
 }
 
 const initialState: eventState = {
     loading: false,
     error: false,
     eventData: null,
-    event: null
+    event: null,
+    eventAction: null,
 };
 
 const getEventData = createAsyncThunk("event/getEventData", async ({ token, trxType }: { token: string, trxType: string }, { rejectWithValue }) => {
@@ -65,6 +67,38 @@ const getEventDetail = createAsyncThunk("event/getEventDetail", async ({ token, 
     }
 });
 
+const eventAction = createAsyncThunk("event/eventAction", async ({ token, id, actionType }: { token: string, id: number, actionType: string }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        let response;
+        switch (actionType) {
+            case "suspend":
+                response = await axiosInstance.patch(`/admin/events/${id}/suspend-event`, {}, { headers });
+                return response.data;
+            case "activate":
+                response = await axiosInstance.patch(`/admin/events/${id}/activate-event`, {}, { headers });
+                return response.data;
+            case "delete":
+                response = await axiosInstance.delete(`/admin/events/${id}/delete-event`, { headers });
+                return response.data;
+            default:
+                response = await axiosInstance.patch(`/admin/events/${id}/suspend-event`, {}, { headers });
+                return response.data;
+        }
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
+
+
 const eventSlice = createSlice({
     name: "event",
     initialState,
@@ -84,7 +118,6 @@ const eventSlice = createSlice({
             state.loading = false;
         });
 
-
         builder.addCase(getEventDetail.pending, (state) => {
             state.loading = true;
         });
@@ -96,8 +129,20 @@ const eventSlice = createSlice({
         builder.addCase(getEventDetail.rejected, (state) => {
             state.loading = false;
         });
+
+        builder.addCase(eventAction.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(eventAction.fulfilled, (state, { payload }) => {
+            state.loading = false;
+            // store data
+            state.eventAction  = payload?.data
+        });
+        builder.addCase(eventAction.rejected, (state) => {
+            state.loading = false;
+        });
     }
 });
 
-export { getEventData, getEventDetail }
+export { getEventData, getEventDetail, eventAction }
 export default eventSlice.reducer;

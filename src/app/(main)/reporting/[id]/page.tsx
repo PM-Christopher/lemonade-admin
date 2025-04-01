@@ -44,7 +44,7 @@ function ReportDetailsPage() {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Category:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>{report?.category}</p>
+                            <p className={"text-[14px] font-medium"}>{capitalizeWords(report?.category)}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
@@ -75,7 +75,14 @@ function ReportDetailsPage() {
                     </div>
                 </div>
                 <div
-                    className={"w-[780px] h-fit bg-white rounded-tr-[12px] rounded-tl-[12px] flex flex-col p-[24px] gap-[16px]"}></div>
+                    className={"w-[780px] h-fit bg-white rounded-tr-[12px] rounded-tl-[12px] flex flex-col gap-[16px]"}>
+                    <div className={'flex justify-between items-center p-[18px] border-b-[1px] border-b-grey-20'}>
+                        <p className={'font-semiBold text-[16px]'}>Content</p>
+                        <div className={'p-[10px] px-[14px] border-[1px] rounded-[12px]'}>
+                            <p className={'font-medium text-[14px]'}>Delete</p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </MainLayout>
     );

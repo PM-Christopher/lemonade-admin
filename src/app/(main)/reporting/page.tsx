@@ -104,7 +104,7 @@ function ReportingPage({}) {
                                                 {row.reported_by.name}
                                             </td>
                                             <td className={'p-4 font-medium text-sm font-sans'}>
-                                                {row.category}
+                                                {capitalizeWords(row.category)}
                                             </td>
                                             <td className={'p-4 font-medium text-sm font-sans'}>
                                                 {row.case}

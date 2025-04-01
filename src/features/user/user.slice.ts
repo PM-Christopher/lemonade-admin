@@ -7,6 +7,7 @@ interface userState {
     userData: {} | null
     user: {} | null;
     userDetail: {} | null
+    userAction: {} | null
 }
 
 const initialState: userState = {
@@ -15,6 +16,7 @@ const initialState: userState = {
     userData: null,
     user: null,
     userDetail: null,
+    userAction: null
 };
 
 const getUserData = createAsyncThunk("user/getUserData", async ({ token, trxType }: { token: string, trxType: string }, { rejectWithValue }) => {
@@ -100,6 +102,37 @@ const getAccountInfo = createAsyncThunk("user/getAccountInfo", async ({ token, i
     }
 });
 
+const userAction = createAsyncThunk("user/userAction", async ({ token, id, actionType }: { token: string, id: number, actionType: string }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        let response;
+        switch (actionType) {
+            case "suspend":
+                response = await axiosInstance.patch(`/admin/users/${id}/suspend-user`, {}, { headers });
+                return response.data;
+            case "deactivate":
+                response = await axiosInstance.patch(`/admin/users/${id}/deactivate-user`, {}, { headers });
+                return response.data;
+            case "reactivate":
+                response = await axiosInstance.patch(`/admin/users/${id}/reactivate-user`, {}, { headers });
+                return response.data;
+            default:
+                response = await axiosInstance.patch(`/admin/users/${id}/suspend-user`, {}, { headers });
+                return response.data;
+        }
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
+
 
 const userSlice = createSlice({
     name: "user",
@@ -144,8 +177,20 @@ const userSlice = createSlice({
             state.loading = false;
         });
 
+        builder.addCase(userAction.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(userAction.fulfilled, (state, { payload }) => {
+            state.loading = false;
+            // store data
+            state.userAction  = payload?.data
+        });
+        builder.addCase(userAction.rejected, (state) => {
+            state.loading = false;
+        });
+
     }
 });
 
-export { getUserData, getUserDetail, getAccountInfo }
+export { getUserData, getUserDetail, getAccountInfo, userAction }
 export default userSlice.reducer;

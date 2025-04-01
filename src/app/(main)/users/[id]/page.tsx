@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { ChevronDown, MessageCircle, MessageCircleMore, PrinterIcon } from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { usersDetailPageViews } from "@/utils/pageViews";
@@ -14,7 +14,10 @@ import {useParams} from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
 import {getEventDetail} from "@/features/transaction/transaction.slice";
-import {getAccountInfo, getUserDetail} from "@/features/user/user.slice";
+import {getAccountInfo, getUserDetail, userAction} from "@/features/user/user.slice";
+import DeactivateModal from "@/modals/users/DeactivateModal";
+import SuspendModal from "@/modals/users/SuspendModal";
+import suspendModal from "@/modals/users/SuspendModal";
 
 function UserDetailsPage({}) {
   const currentPage:number = 1
@@ -24,6 +27,28 @@ function UserDetailsPage({}) {
   const dispatch  = useDispatch<AppDispatch>()
   const { authToken } = useSelector((state: RootState) => state.auth)
   const { loading, user, userDetail } = useSelector((state: RootState) => state.user) as { user: any, loading: boolean, userDetail: any }
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
+  }
+
+  const handleClickOutside = (event: Event) => {
+    if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside as EventListener)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside as EventListener)
+    }
+  }, []);
 
   useEffect(() => {
     if (authToken && id) {
@@ -34,6 +59,8 @@ function UserDetailsPage({}) {
   const [menuOption, setMenuOption] = useState("activities-log");
   const [tribeOpen, setTribeOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false)
+  const [suspendModalOpen, setSuspendModalOpen] = useState(false)
 
   const switchOption = (option: string) => {
     setMenuOption(option);
@@ -41,6 +68,14 @@ function UserDetailsPage({}) {
 
   const toggleBalanceModalOpen = () => {
     setBalanceModalOpen(!balanceModalOpen);
+  };
+
+  const toggleDeactivateModalOpen = () => {
+    setDeactivateModalOpen(!deactivateModalOpen);
+  };
+
+  const toggleSuspendModalOpen = () => {
+    setSuspendModalOpen(!suspendModalOpen);
   };
 
   const renderViews = () => {
@@ -68,7 +103,12 @@ function UserDetailsPage({}) {
     }
   }, [menuOption]);
 
-  console.log({userDetail})
+  const reactivateUser = () => {
+    if (authToken && id) {
+      dispatch(userAction({token: authToken, id, actionType: 'reactivate'}))
+    }
+  }
+
   /**
    *
    * */
@@ -85,12 +125,35 @@ function UserDetailsPage({}) {
                 <MessageCircleMore className="w-[15px]" />
                 <p className={"font-medium text-[14px]"}>Chat</p>
               </div>
-              <div className={"flex border-[1px] border-light-grey-50 bg-none w-[149px] h-[44px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"}>
-                <div className={"flex justify-between items-center"}>
-                  <p className={"text-[14px] font-medium text-black-light"}>Actions</p>
-                </div>
-                <ChevronDown className={"text-text-grey w-[20px]"} />
-              </div>
+              {
+                user?.status !== 'ACTIVE' ? (
+                    <button className={"h-[44px] border-[1px] bg-gradient-green rounded-[12px] w-[156px] text-center"} onClick={reactivateUser}>
+                      <p className={"text-[16px] font-medium text-white"}>Reactivate user</p>
+                    </button>
+                ) : (
+                    <div className="relative inline-block">
+                      <div className={"flex border-[1px] border-light-grey-50 bg-none w-[149px] h-[44px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"} onClick={handleToggleDropdown}>
+                        <div className={"flex justify-between items-center"}>
+                          <p className={"text-[14px] font-medium text-black-light"}>Actions</p>
+                        </div>
+                        <ChevronDown className={"text-text-grey w-[20px]"} />
+                      </div>
+                      {dropdownOpen && (
+                          <div
+                              className="absolute left-0 top-full w-[207px] bg-white rounded-[12px] shadow z-50">
+                            <ul>
+                              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={toggleSuspendModalOpen}>
+                                <p className={"font-normal text-[16px]"}>Suspend User</p>
+                              </li>
+                              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={toggleDeactivateModalOpen}>
+                                <p className={"font-normal text-[16px]"}>Deactivate User</p>
+                              </li>
+                            </ul>
+                          </div>
+                      )}
+                    </div>
+                )
+              }
             </div>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
@@ -238,6 +301,9 @@ function UserDetailsPage({}) {
         </div>
       </section>
       <BalanceModal isOpen={balanceModalOpen} toggle={toggleBalanceModalOpen} />
+      <DeactivateModal isOpen={deactivateModalOpen} toggle={toggleDeactivateModalOpen} id={id} />
+      <SuspendModal isOpen={suspendModalOpen} toggle={toggleSuspendModalOpen} id={id} />
+
     </MainLayout>
   );
 }

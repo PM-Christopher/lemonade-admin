@@ -1,18 +1,31 @@
 'use client'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
 import {PencilIcon, PlusIcon, TrashIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import PromotionsCard from "@/components/events/PromotionsCard";
 import {listPromotions} from "@/data/tableData";
 import CreatePromotionModal from "@/modals/events/CreatePromotionModal";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getPromotionData} from "@/features/events/promotion.slice";
 
 function AddPromotionPage() {
     const [promotionModal, setPromotionModal] = useState(false)
+    const dispatch = useDispatch<AppDispatch>();
+
+    const { authToken } = useSelector((state: RootState) => state.auth)
+    const { promotionData } = useSelector((state: RootState) => state.promotion) as {promotionData: any}
 
     const togglePromotionModal = () => {
         setPromotionModal(!promotionModal);
     }
+
+    useEffect(() => {
+        if (authToken) {
+            dispatch(getPromotionData({token: authToken}))
+        }
+    }, [])
 
     return (
         <MainLayout>
@@ -30,8 +43,8 @@ function AddPromotionPage() {
                 </div>
                 <div className={'grid grid-cols-3 px-[20px] gap-[24px]'}>
                     {
-                        listPromotions.map((promotion, index) => (
-                            <PromotionsCard key={index} />
+                        promotionData?.promotions.map((promotion: any, index: number) => (
+                            <PromotionsCard promotion={promotion} key={index} />
                         ))
                     }
                 </div>

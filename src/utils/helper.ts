@@ -54,3 +54,7 @@ export const GetStatusClass = (status: string) => {
     }
     return color;
 };
+
+export const formatThousandSeparator = (num: number | string): string => {
+    return Number(num).toLocaleString();
+};
