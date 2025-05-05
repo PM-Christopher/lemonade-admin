@@ -6,7 +6,7 @@ interface walletState {
     loading: boolean;
     error: boolean;
     walletData: {} | null
-    withdrawalRequests: [] | null
+    withdrawalRequests: {} | null
     walletDetail: {} | null
 }
 
@@ -15,7 +15,7 @@ const initialState: walletState = {
     loading: false,
     error: false,
     walletData: null,
-    withdrawalRequests: [],
+    withdrawalRequests: {},
     walletDetail: null
 };
 
@@ -27,7 +27,7 @@ const getWalletData = createAsyncThunk("wallet/getWalletData", async ({ token }:
     };
 
     try {
-        const response = await axiosInstance.get(`/admin/wallet/`, { headers });
+        const response = await axiosInstance.get(`/admin/wallet`, { headers });
         return response.data;
     } catch (err: any) {
         if (!err.response) {
@@ -86,7 +86,7 @@ const walletSlice = createSlice({
         builder.addCase(getWalletData.fulfilled, (state, { payload }) => {
             state.loading = false;
             // store metrics
-            // state.metrics  = payload?.data
+            state.walletData  = payload?.data
         });
         builder.addCase(getWalletData.rejected, (state) => {
             state.loading = false;
@@ -98,7 +98,7 @@ const walletSlice = createSlice({
         builder.addCase(getWithdrawalRequest.fulfilled, (state, { payload }) => {
             state.loading = false;
             // store metrics
-            state.withdrawalRequests = payload?.data?.history
+            state.withdrawalRequests = payload?.data
         });
         builder.addCase(getWithdrawalRequest.rejected, (state) => {
             state.loading = false;

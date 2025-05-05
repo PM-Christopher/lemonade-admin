@@ -47,7 +47,7 @@ function TeamMembersPage({}) {
         <MainLayout>
             <section className="flex flex-col gap-[20px] mt-[24px]">
                 <div className={"px-[20px] flex justify-between"}>
-                    <p className={"text-[16px] font-semiBold"}>10 Team Members</p>
+                    <p className={"text-[16px] font-semiBold"}>{teamData?.admins?.length|| 0} Team Members</p>
                     <div className={"flex justify-between gap-[12px]"}>
                         <div
                             className="flex items-center gap-3 bg-light_grey p-2 px-[12px] h-[40px] w-[285px] rounded-[12px] border-[1px] border-grey-20">

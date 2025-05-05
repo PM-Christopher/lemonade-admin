@@ -102,22 +102,22 @@ const getTransactionData = createAsyncThunk("transaction/getTransactionData", as
         let response;
         switch (trxType) {
             case "plan-subscriptions":
-                response = await axiosInstance.get(`/admin/transaction/plan-subscription/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/plan-subscription`, { headers });
                 return response.data;
             case "wallet-withdrawals":
-                response = await axiosInstance.get(`/admin/transaction/wallet-withdrawals/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/wallet-withdrawals`, { headers });
                 return response.data;
             case "boosting":
-                response = await axiosInstance.get(`/admin/transaction/plan-subscription/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/plan-subscription`, { headers });
                 return response.data;
             case "services":
-                response = await axiosInstance.get(`/admin/transaction/plan-subscription/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/plan-subscription`, { headers });
                 return response.data;
             case "events":
-                response = await axiosInstance.get(`/admin/transaction/events/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/events`, { headers });
                 return response.data;
             case "promotions":
-                response = await axiosInstance.get(`/admin/transaction/plan-subscription/`, { headers });
+                response = await axiosInstance.get(`/admin/transaction/plan-subscription`, { headers });
                 return response.data;
         }
     } catch (err: any) {
