@@ -94,7 +94,7 @@ export default function Home() {
   return (
     <MainLayout>
       <div className="px-[40px] gap-[20px] flex flex-col mt-[20px]">
-        <div
+        {/* <div
           className={
             "flex border-[1px] border-grey-20 bg-none w-fit px-[16px] py-[10px] rounded-[12px] gap-[30px]"
           }
@@ -104,7 +104,7 @@ export default function Home() {
             <p className={"text-[12px] font-semiBold"}>ALL TIME</p>
           </div>
           <ChevronDown className={"text-text-grey"} />
-        </div>
+        </div> */}
         <div className={"grid grid-cols-4 gap-[20px]"}>
           {data.map((item, index) => (
             <DataCard

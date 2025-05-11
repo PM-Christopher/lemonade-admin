@@ -9,11 +9,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DataCard from "@/components/global/DataCard";
-import GlobalTable from "@/components/global/GlobalTable";
 import {
   walletHeaders,
-  walletMgtData,
-  walletMgtHeaders,
 } from "@/data/tableData";
 import WalletThresholdModal from "@/modals/wallet-management/WalletThresholdModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +22,10 @@ import { AppDispatch, RootState } from "@/redux/store";
 
 function WalletMgtPage({}) {
   const [editThreshold, setEditThreshold] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [itemsPerPage] = useState(5); // Number of items per page
+  
   const dispatch = useDispatch<AppDispatch>();
   const { authToken } = useSelector((state: RootState) => state.auth);
   const { withdrawalRequests } = useSelector(
@@ -33,8 +34,6 @@ function WalletMgtPage({}) {
 
   const { walletData } = useSelector((state: RootState) => state.wallet as any);
 
-  console.log("wall", walletData);
-
   useEffect(() => {
     if (authToken) {
       dispatch(getWalletData({ token: authToken }));
@@ -42,18 +41,74 @@ function WalletMgtPage({}) {
     }
   }, []);
 
+  // Handle searching
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
+  // Filter data based on search term
+  const filteredData = withdrawalRequests?.history?.filter((row: any) => 
+    row?.fullname?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  // Get current items for the page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   const toggleEditThreshold = () => {
     setEditThreshold(!editThreshold);
   };
-  const currentPage = 1;
-  const totalPages = 10;
 
-  console.log("withdrawalRequests", withdrawalRequests);
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const maxPageButtons = 5;
+    let pageNumbers = [];
+
+    if (totalPages <= maxPageButtons) {
+      // Show all pages if total pages are less than max buttons
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Calculate which page numbers to show
+      if (currentPage <= 3) {
+        // If we're near the beginning
+        for (let i = 1; i <= 5; i++) {
+          pageNumbers.push(i);
+        }
+      } else if (currentPage >= totalPages - 2) {
+        // If we're near the end
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // If we're in the middle
+        for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+          pageNumbers.push(i);
+        }
+      }
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <MainLayout>
       <section className="flex flex-col gap-[20px] mt-[20px]">
         <div className={"px-[20px] flex justify-between"}>
-          <p className={"text-[16px] font-semiBold"}>10,000 Wallets</p>
+          <p className={"text-[16px] font-semiBold"}>
+            {walletData?.total_wallets || 0} Wallets
+          </p>
           <div className={"flex justify-between gap-[12px]"}>
             <div className="flex items-center gap-3 bg-light_grey p-2 px-[12px] h-[40px] w-[285px] rounded-[12px] border-[1px] border-grey-20">
               <div>
@@ -63,12 +118,14 @@ function WalletMgtPage({}) {
                 <input
                   id="search"
                   type="text"
+                  value={searchTerm}
+                  onChange={handleSearch}
                   className="rounded-xl text-[14px] bg-light-grey focus:outline-none focus:ring-0 focus:border-transparent w-full py-4"
                   placeholder="Search guest name, email address"
                 />
               </div>
             </div>
-            <div
+            {/* <div
               className={
                 "flex border-[1px] border-grey-20 bg-none w-[193px] h-[40px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
               }
@@ -79,8 +136,8 @@ function WalletMgtPage({}) {
                 </p>
               </div>
               <ChevronDown className={"text-text-grey w-[20px]"} />
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className={
                 "flex border-[1px] border-grey-20 bg-none w-[193px] h-[40px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
               }
@@ -92,7 +149,7 @@ function WalletMgtPage({}) {
                 </p>
               </div>
               <ChevronDown className={"text-text-grey w-[20px]"} />
-            </div>
+            </div> */}
             <div>
               <Button
                 className={
@@ -148,49 +205,8 @@ function WalletMgtPage({}) {
                   </tr>
                 </thead>
                 <tbody>
-
-
-
-                    {/*  {withdrawalRequests &&
-                  walletData?.wallets?.length > 0 ? (
-                    walletData.wallets.map((row: any, index: any) => (
-                      <tr
-                        key={index}
-                        className="border-b border-grey-20 h-[72px] cursor-pointer"
-                        onClick={() =>
-                          (window.location.href = `/wallet-management/${row.wallet_id}`)
-                        }
-                      >
-                        <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.txn_id}
-                        </td>
-                        <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.fullname}
-                        </td>
-                        <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.amount}
-                        </td>
-                        <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.created_at}
-                        </td>
-                        <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.status}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={walletHeaders.length}
-                        className="p-4 text-center text-sm text-gray-500"
-                      >
-                        No data available
-                      </td>
-                    </tr>
-                  )} */}
-                  {withdrawalRequests &&
-                  withdrawalRequests?.history?.length > 0 ? (
-                    withdrawalRequests.history.map((row: any, index: any) => (
+                  {currentItems.length > 0 ? (
+                    currentItems.map((row: any, index: any) => (
                       <tr
                         key={index}
                         className="border-b border-grey-20 h-[72px] cursor-pointer"
@@ -232,31 +248,29 @@ function WalletMgtPage({}) {
               <div className="p-4 px-10 flex items-center justify-between bg-mid-grey rounded-br-lg rounded-bl-lg">
                 <button
                   disabled={currentPage === 1}
-                  // onClick={() => onPageChange(currentPage - 1)}
+                  onClick={() => handlePageChange(currentPage - 1)}
                   className="flex gap-2 h-9 items-center text-gray-500 border-2 border-light-grey-50 p-2 rounded-lg disabled:opacity-50"
                 >
                   Previous
                 </button>
                 <div className="flex gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        // onClick={() => onPageChange(page)}
-                        className={`p-2 w-8 h-8 text-sm font-medium rounded-lg ${
-                          page === currentPage
-                            ? "bg-light-white text-text-grey"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
+                  {getPageNumbers().map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`p-2 w-8 h-8 text-sm font-medium rounded-lg ${
+                        page === currentPage
+                          ? "bg-light-white text-text-grey"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
                 </div>
                 <button
-                  disabled={Number(currentPage) === Number(totalPages)}
-                  // onClick={() => onPageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  onClick={() => handlePageChange(currentPage + 1)}
                   className="flex gap-2 h-9 items-center text-gray-500 border-2 border-light-grey-50 rounded-lg p-2 disabled:opacity-50"
                 >
                   Next
