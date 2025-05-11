@@ -42,7 +42,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-date-picker": "^11.0.0",
     "react-datepicker": "^7.5.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18",
     "react-draft-wysiwyg": "^1.15.0",
     "react-dropzone": "^14.3.5",
     "react-hot-toast": "^2.4.1",
