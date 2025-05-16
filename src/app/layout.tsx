@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import Providers from "@/redux/Provider";
 import {AlertMessage} from "@/components/global/AlertMessage";
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

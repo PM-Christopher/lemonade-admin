@@ -1,21 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "@/lib/axiosInstane";
 
-interface teamState {
+interface TeamState {
   loading: boolean;
   error: boolean;
   teamData: {} | null;
   team: {} | null;
 }
 
-const initialState: teamState = {
+const initialState: TeamState = {
   loading: false,
   error: false,
   teamData: null,
   team: null,
 };
 
-const getTeamData = createAsyncThunk(
+export const getTeamData = createAsyncThunk(
   "team/getTeamData",
   async ({ token }: { token: string }, { rejectWithValue }) => {
     const headers = {
@@ -38,7 +38,7 @@ const getTeamData = createAsyncThunk(
   }
 );
 
-const getTeamDetail = createAsyncThunk(
+export const getTeamDetail = createAsyncThunk(
   "team/getTeamDetail",
   async ({ token, id }: { token: string; id: number }, { rejectWithValue }) => {
     const headers = {
@@ -61,8 +61,8 @@ const getTeamDetail = createAsyncThunk(
   }
 );
 
-const addTeamMember = createAsyncThunk(
-  "team/getTeamDetail",
+export const addTeamMember = createAsyncThunk(
+  "team/addTeamMember", // Changed this action type name
   async (
     {
       token,
@@ -111,43 +111,49 @@ const teamSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getTeamData.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getTeamData.fulfilled, (state, { payload }) => {
-      state.loading = false;
-      // store data
-      state.teamData = payload?.data;
-    });
-    builder.addCase(getTeamData.rejected, (state) => {
-      state.loading = false;
-    });
-
-    builder.addCase(getTeamDetail.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getTeamDetail.fulfilled, (state, { payload }) => {
-      state.loading = false;
-      // store data
-      state.team = payload?.data?.team;
-    });
-    builder.addCase(getTeamDetail.rejected, (state) => {
-      state.loading = false;
-    });
-
-    builder.addCase(addTeamMember.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(addTeamMember.fulfilled, (state, { payload }) => {
-      state.loading = false;
-      // store data
-      state.team = payload?.data;
-    });
-    builder.addCase(addTeamMember.rejected, (state) => {
-      state.loading = false;
-    });
+    builder
+      // Handle getTeamData
+      .addCase(getTeamData.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(getTeamData.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.teamData = payload?.data;
+      })
+      .addCase(getTeamData.rejected, (state) => {
+        state.loading = false;
+        state.error = true;
+      })
+      
+      // Handle getTeamDetail
+      .addCase(getTeamDetail.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(getTeamDetail.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.team = payload?.data?.team;
+      })
+      .addCase(getTeamDetail.rejected, (state) => {
+        state.loading = false;
+        state.error = true;
+      })
+      
+      // Handle addTeamMember
+      .addCase(addTeamMember.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(addTeamMember.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.team = payload?.data;
+      })
+      .addCase(addTeamMember.rejected, (state) => {
+        state.loading = false;
+        state.error = true;
+      });
   },
 });
 
-export { getTeamData, getTeamDetail, addTeamMember };
 export default teamSlice.reducer;
