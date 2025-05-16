@@ -58,3 +58,24 @@ export const GetStatusClass = (status: string) => {
 export const formatThousandSeparator = (num: number | string): string => {
     return Number(num).toLocaleString();
 };
+
+
+export const downloadCSV = (csvString: string, filename: string = "data.csv") => {
+  if (!csvString) {
+    console.error("CSV data is empty");
+    return;
+  }
+
+  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
