@@ -1,6 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "@/lib/axiosInstane";
 
+// Define the state type for better type safety
+interface ExportState {
+  loading: boolean;
+  data: any; // Replace with more specific type if possible
+  error: any;
+}
+
+const initialState: ExportState = {
+  loading: false,
+  data: null,
+  error: null
+};
+
 const getCSV = createAsyncThunk(
   "utils/getCSV",
   async (
@@ -30,20 +43,21 @@ const getCSV = createAsyncThunk(
 
 const exportSlice = createSlice({
   name: "exports",
-  initialState: {},
+  initialState,
   reducers: {},
 
   extraReducers: (builder) => {
     builder.addCase(getCSV.pending, (state) => {
-    //   state.loading = true;
+      state.loading = true;
+      state.error = null;
     });
     builder.addCase(getCSV.fulfilled, (state, { payload }) => {
-    //   state.loading = false;
-      // store data
-    //   state.user = payload?.data?.user;
+      state.loading = false;
+      state.data = payload;
     });
-    builder.addCase(getCSV.rejected, (state) => {
-    //   state.loading = false;
+    builder.addCase(getCSV.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
     });
   },
 });
