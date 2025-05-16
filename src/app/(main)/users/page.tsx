@@ -52,8 +52,8 @@ function UsersPage({}) {
     setLoading(true);
     dispatch(getCSV({ token: authToken || "", table: "users" }))
       .then((res) => {
-        if (res.payload.status) {
-          setLoading(false);
+         setLoading(false);
+       if (res.meta.requestStatus) {
 
           downloadCSV(res.payload, "users.csv");
 
