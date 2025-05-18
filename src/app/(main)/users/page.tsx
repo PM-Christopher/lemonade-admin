@@ -52,9 +52,8 @@ function UsersPage({}) {
     setLoading(true);
     dispatch(getCSV({ token: authToken || "", table: "users" }))
       .then((res) => {
-         setLoading(false);
-       if (res.meta.requestStatus) {
-
+        setLoading(false);
+        if (res.meta.requestStatus) {
           downloadCSV(res.payload, "users.csv");
 
           dispatch(
@@ -65,7 +64,7 @@ function UsersPage({}) {
             })
           );
         } else {
-              setLoading(false);
+          setLoading(false);
           dispatch(
             updateToastifyReducer({
               show: true,
@@ -76,7 +75,7 @@ function UsersPage({}) {
         }
       })
       .catch((res) => {
-          setLoading(false);
+        setLoading(false);
         dispatch(
           updateToastifyReducer({
             show: true,
@@ -87,11 +86,15 @@ function UsersPage({}) {
       });
   };
 
+
+
   return (
     <MainLayout>
       <section className="flex flex-col gap-[20px] mt-[20px]">
         <div className={"px-[20px] flex justify-between"}>
-          <p className={"text-[16px] font-semiBold"}>10,000 users</p>
+          <p className={"text-[16px] font-semiBold"}>
+            {userData?.users?.length || 0} users
+          </p>
           <div className={"flex justify-between gap-[12px]"}>
             <div className="flex items-center gap-3 bg-light_grey p-2 px-[12px] h-[40px] w-[285px] rounded-[12px] border-[1px] border-grey-20">
               <div>
