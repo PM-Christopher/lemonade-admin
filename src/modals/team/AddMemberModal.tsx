@@ -125,7 +125,7 @@ const AddMember: React.FC<BalanceModalProps> = ({ isOpen, toggle }) => {
               placeholder=""
               className="h-12 rounded-xl bg-light-grey form-font border-0"
               value={formik.values.first_name}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange("first_name")}
               onBlur={formik.handleBlur}
             />
           </div>
@@ -143,7 +143,7 @@ const AddMember: React.FC<BalanceModalProps> = ({ isOpen, toggle }) => {
               placeholder=""
               className="h-12 rounded-xl bg-light-grey form-font border-0"
               value={formik.values.last_name}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange("last_name")}
               onBlur={formik.handleBlur}
             />
           </div>
@@ -161,7 +161,7 @@ const AddMember: React.FC<BalanceModalProps> = ({ isOpen, toggle }) => {
               placeholder="e.g. Janedoe@example.com"
               className="h-12 rounded-xl bg-light-grey form-font border-0"
               value={formik.values.email}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange("email")}
               onBlur={formik.handleBlur}
             />
           </div>
@@ -178,14 +178,12 @@ const AddMember: React.FC<BalanceModalProps> = ({ isOpen, toggle }) => {
               type="password"
               className="h-12 rounded-xl bg-light-grey form-font border-0"
               value={formik.values.password}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange("password")}
               onBlur={formik.handleBlur}
             />
           </div>
 
-
-
-<div className="grid gap-2">
+          <div className="grid gap-2">
             <Label
               htmlFor="role"
               className="font-sans text-text-grey font-normal text-[14px]"
@@ -197,12 +195,10 @@ const AddMember: React.FC<BalanceModalProps> = ({ isOpen, toggle }) => {
               type="text"
               className="h-12 rounded-xl bg-light-grey form-font border-0"
               value={formik.values.role}
-              onChange={formik.handleChange}
+              onChange={formik.handleChange("role")}
               onBlur={formik.handleBlur}
             />
           </div>
-
-          
         </div>
         <div className={"flex justify-between gap-[16px] px-[16px] pb-[10px]"}>
           <button

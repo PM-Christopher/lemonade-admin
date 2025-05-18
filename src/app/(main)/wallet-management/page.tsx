@@ -34,12 +34,26 @@ function WalletMgtPage({}) {
 
   const { walletData } = useSelector((state: RootState) => state.wallet as any);
 
+
+
   useEffect(() => {
     if (authToken) {
       dispatch(getWalletData({ token: authToken }));
       dispatch(getWithdrawalRequest({ token: authToken }));
     }
   }, []);
+
+
+
+
+  const refetchFunc =()=>{
+
+     if (authToken) {
+      dispatch(getWalletData({ token: authToken }));
+      dispatch(getWithdrawalRequest({ token: authToken }));
+    }
+  }
+
 
   // Handle searching
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,12 +116,13 @@ function WalletMgtPage({}) {
     return pageNumbers;
   };
 
+
   return (
     <MainLayout>
       <section className="flex flex-col gap-[20px] mt-[20px]">
         <div className={"px-[20px] flex justify-between"}>
           <p className={"text-[16px] font-semiBold"}>
-            {walletData?.total_wallets || 0} Wallets
+            {withdrawalRequests?.history?.length || 0} Wallets
           </p>
           <div className={"flex justify-between gap-[12px]"}>
             <div className="flex items-center gap-3 bg-light_grey p-2 px-[12px] h-[40px] w-[285px] rounded-[12px] border-[1px] border-grey-20">
@@ -175,12 +190,12 @@ function WalletMgtPage({}) {
             >
               <DataCard
                 title={"Wallet Revenue"}
-                count={walletData?.wallet_revenue || 0}
+                count={withdrawalRequests?.wallet_revenue || 0}
                 isPrice={true}
               />
               <DataCard
                 title={"Total Wallets"}
-                count={walletData?.total_wallets || 0}
+                count={withdrawalRequests?.history?.length || 0}
               />
               <DataCard
                 title={"Withdrawal Threshold"}
@@ -281,6 +296,7 @@ function WalletMgtPage({}) {
         </div>
       </section>
       <WalletThresholdModal
+      refetchFunc={refetchFunc}
         isOpen={editThreshold}
         toggle={toggleEditThreshold}
       />

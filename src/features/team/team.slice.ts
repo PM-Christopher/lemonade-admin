@@ -62,7 +62,7 @@ export const getTeamDetail = createAsyncThunk(
 );
 
 export const addTeamMember = createAsyncThunk(
-  "team/addTeamMember", // Changed this action type name
+  "team/addTeamMember",
   async (
     {
       token,
