@@ -4,7 +4,7 @@ export const transactionPageViews = [
     // {key: "boosting", title: "Boosting"},
     // {key: "services", title: "Services"},
     {key: "events", title: "Events"},
-    {key: "promotions", title: "Promotions"},
+    // {key: "promotions", title: "Promotions"},
 ]
 
 export const usersPageViews = [

@@ -21,13 +21,20 @@ import {
   getPlanSubscriptions,
   getTransactionData,
 } from "@/features/transaction/transaction.slice";
+import { manualTransactionsExport } from "@/utils/helper";
 
 function TransactionsPage({}) {
   const [menuOption, setMenuOption] = useState("plan-subscriptions");
   const dispatch = useDispatch<AppDispatch>();
 
   const { authToken } = useSelector((state: RootState) => state.auth);
-  const { trxData } = useSelector((state: RootState) => state.transaction);
+  type TrxDataType = {
+    history?: any[];
+    subscribers?: number;
+    // add other properties as needed
+  };
+
+  const { trxData } = useSelector((state: RootState) => state.transaction) as { trxData: TrxDataType };
 
   const switchOption = (option: string) => {
     setMenuOption(option);
@@ -56,7 +63,26 @@ function TransactionsPage({}) {
     }
   };
 
-
+  const exportCSV = () => {
+    console.log("menuOption", menuOption);
+    switch (menuOption) {
+      case "plan-subscriptions":
+        manualTransactionsExport(trxData?.history || [], "plan-subscriptions");
+        break;
+      case "wallet-withdrawals":
+        manualTransactionsExport(trxData?.history || [], "wallet-withdrawals");
+        break;
+      case "boosting":
+        break;
+      case "services":
+        break;
+      case "events":
+        manualTransactionsExport(trxData?.history || [], "events");
+        break;
+      case "promotions":
+        break;
+    }
+  };
 
   return (
     <MainLayout>
@@ -99,6 +125,7 @@ function TransactionsPage({}) {
                         </div> */}
             <div>
               <Button
+                onClick={exportCSV}
                 className={
                   "flex h-[40px] rounded-[12px] bg-gradient-green border-step-color"
                 }
