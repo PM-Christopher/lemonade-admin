@@ -200,7 +200,7 @@ function EventDetailsPage({}) {
             </div>
 
             <div className={"flex flex-col px-[24px]"}>
-              {event?.history.map((item: any, index: number) => (
+              {paginatedData?.map((item: any, index: number) => (
                 <div className="px-[16px] pt-[16px] pb-[24px]" key={index}>
                   <div className="flex justify-between">
                     <div className="flex flex-col">
