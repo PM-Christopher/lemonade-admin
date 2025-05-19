@@ -124,6 +124,8 @@ function SubscriptionDetailsPage({}) {
     document.body.removeChild(link);
   };
 
+
+  console.log("subscription", subscription)
   return (
     <MainLayout>
       <section className="p-4 md:p-5 flex lg:flex-col flex-row gap-4 md:gap-5 w-full overflow-x-hidden max-w-full">
