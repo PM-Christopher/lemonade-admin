@@ -9,7 +9,7 @@ export const transactionPageViews = [
 
 export const usersPageViews = [
     {key: "users", title: "Users"},
-    {key: "affiliate", title: "Affiliate"},
+    {key: "affiliates", title: "Affiliate"},
 ]
 
 export const usersDetailPageViews = [

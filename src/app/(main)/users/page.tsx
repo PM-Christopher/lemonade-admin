@@ -37,8 +37,8 @@ function UsersPage({}) {
     switch (menuOption) {
       case "users":
         return <UsersViews userData={userData} />;
-      case "affiliate":
-        return <AffiliateView />;
+      case "affiliates":
+        return <AffiliateView userData={userData} />;
     }
   };
 

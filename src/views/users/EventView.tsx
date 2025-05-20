@@ -11,7 +11,7 @@ const EventView: React.FC<EventViewProps> = ({userDetail}) => {
         <div className="flex flex-col gap-[24px]">
             <div className={"px-[24px] pt-[24px] p-[16px]"}>
                 <div
-                    className={"flex border-[1px] border-grey-20 w-[193px] h-[40px] rounded-[12px] justify-between items-center bg-light-grey px-[16px] py-[10px]"}>
+                    className={"flex border-[1px] border-grey-20  h-[40px] rounded-[12px] justify-between items-center bg-light-grey px-[16px] py-[10px]"}>
                     <div className={'flex justify-between items-center'}>
                         <div className={"flex gap-[8px] items-center text-text-grey"}>
                             <CalendarIcon className={"w-[15px]"}/>
