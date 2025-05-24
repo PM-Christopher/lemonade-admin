@@ -10,7 +10,7 @@ export function capitalizeWords(str: string | null | undefined): string {
 
   return str
     .split(" ") // Split into words
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize first letter
+    .map((word) => word?.charAt(0).toUpperCase() + word?.slice(1).toLowerCase()) // Capitalize first letter
     .join(" "); // Join back into a string
 }
 

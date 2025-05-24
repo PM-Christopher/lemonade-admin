@@ -63,7 +63,7 @@ const GlobalTable: React.FC<TableProps> = ({
                 </thead>
                 <tbody>
                 {
-                    content.length > 0 ? content.map((row, index) => (
+                    content?.length > 0 ? content.map((row, index) => (
                         <tr key={index} className="border-b border-grey-20 h-[72px]">
                             {Object.keys(row).map((key, cellIdx) => (
                                 <td

@@ -24,7 +24,7 @@ const getReportData = createAsyncThunk("report/getReportData", async ({ token }:
     };
 
     try {
-        let response = await axiosInstance.get(`/admin/reports`, { headers });
+        let response = await axiosInstance.get(`admin/reports`, { headers });
         return response.data;
     } catch (err: any) {
         if (!err.response) {

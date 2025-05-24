@@ -42,7 +42,7 @@ const getAnnouncementDetail = createAsyncThunk("announcement/getAnnouncementDeta
     };
 
     try {
-        let response = await axiosInstance.get(`/admin/announcement/${id}`, { headers });
+        let response = await axiosInstance.get(`admin/announcement/${id}`, { headers });
         return response.data;
     } catch (err: any) {
         if (!err.response) {

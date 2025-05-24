@@ -21,18 +21,18 @@ const PromotionView = ({ pageData }: any) => {
           <DataCard
             styles={"w-full"}
             title={"Promotions Revenue"}
-            count={pageData?.promotions_revenue}
+            count={pageData?.promotions_revenue || 0}
             isPrice={true}
           />
           <DataCard
             styles={"w-full"}
             title={"Total Promotions"}
-            count={pageData?.total_promotions}
+            count={pageData?.total_promotions || 0}
           />
           <DataCard
             styles={"w-full"}
             title={"Offered Promotions"}
-            count={pageData?.offered_promotions}
+            count={pageData?.offered_promotions || 0}
             isLink={true}
             pageLink={"/events/add-promotions"}
           />
