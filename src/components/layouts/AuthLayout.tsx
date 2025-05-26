@@ -16,10 +16,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     const token = cookies.token;
 
     useLayoutEffect(() => {
-        if (token) {
-            redirect("/");
-            return;
-        }
+        // if (token) {
+        //     redirect("/");
+        //     return;
+        // }
         if (!newToken) {
             !(
                 pathname === "/signup" ||

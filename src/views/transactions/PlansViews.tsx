@@ -28,6 +28,7 @@ function PlansViews({trx_data}: PlanIF) {
     const paginatedData = trx_data?.history?.slice(startIndex, startIndex + perPage)
 
 
+
     return (
         <>
             <div className={"flex justify-between gap-[24px] pt-[8px] px-[12px] pb-[16px]"}>

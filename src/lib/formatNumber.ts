@@ -6,8 +6,11 @@ export const formatNumber = (number: number, places: number) => {
 }
 
 export const formatNumberWithCommas = (number: number) => {
+
+    console.log("numbe", typeof number)
     if(number) {
+        console.log("is", number)
         return number.toLocaleString('en-US');
     }
-    return null
+    return 0
 };

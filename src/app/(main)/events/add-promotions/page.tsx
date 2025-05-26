@@ -27,11 +27,14 @@ function AddPromotionPage() {
         }
     }, [])
 
+
+    console.log("promotionData", promotionData)
+
     return (
         <MainLayout>
             <section className="flex flex-col gap-[20px] mt-[24px]">
                 <div className={"px-[20px] flex justify-between"}>
-                    <p className={"text-[16px] font-semiBold"}>10 Promotions</p>
+                    <p className={"text-[16px] font-semiBold"}>{promotionData?.promotions?.length || 0} Promotions</p>
                     <div className={"flex justify-between gap-[12px]"}>
                         <div>
                             <Button className={"flex h-[40px] rounded-[12px] bg-gradient-green border-step-color"}>

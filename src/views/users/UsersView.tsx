@@ -23,6 +23,9 @@ function UsersViews({userData}: any) {
     const startIndex = (currentPage - 1) * perPage;
     const paginatedData = userData?.users?.slice(startIndex, startIndex + perPage)
 
+
+    console.log("userData", userData)
+
     return (
         <>
             <div className="bg-white shadow-md rounded-lg">

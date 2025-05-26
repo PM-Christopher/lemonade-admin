@@ -43,12 +43,15 @@ function EventViews({trx_data}: EventIF) {
     // Determine the start and end indices for slicing the data array
     const startIndex = (currentPage - 1) * perPage;
     const paginatedData = trx_data?.history?.slice(startIndex, startIndex + perPage)
+
+
+    console.log("trx_data", trx_data)
     return (
         <>
             <div className={"flex justify-between gap-[24px] pt-[8px] px-[12px] pb-[16px]"}>
-                <DataCard styles={"w-full"} title={"Total Ticket Revenue"} count={200000} isPrice={true}/>
-                <DataCard styles={"w-full"} title={"Total Tickets Sold"} count={30000}/>
-                <DataCard styles={"w-full"} title={"Total Events"} count={200}/>
+                <DataCard styles={"w-full"} title={"Total Ticket Revenue"} count={trx_data?.total_revenue || 0} isPrice={true}/>
+                <DataCard styles={"w-full"} title={"Total Tickets Sold"} count={trx_data?.tickets_sold || 0}/>
+                <DataCard styles={"w-full"} title={"Total Events"} count={trx_data?.total_events || 0}/>
             </div>
             <div className="bg-white shadow-md rounded-lg">
                 <table className="min-w-full table-auto border-collapse">
