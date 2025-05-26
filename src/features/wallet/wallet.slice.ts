@@ -88,7 +88,7 @@ const getWalletDetail = createAsyncThunk(
   }
 );
 
- const updateWithdrawalThreshold = createAsyncThunk(
+const updateWithdrawalThreshold = createAsyncThunk(
   "wallet/updateThreshold",
   async (
     {
@@ -111,9 +111,97 @@ const getWalletDetail = createAsyncThunk(
     };
 
     try {
-      let response = await axiosInstance.patch(`/admin/wallet/update-withdrawal-threshold`, payload, {
-        headers,
-      });
+      let response = await axiosInstance.patch(
+        `/admin/wallet/update-withdrawal-threshold`,
+        payload,
+        {
+          headers,
+        }
+      );
+      return response.data;
+    } catch (err: any) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+const withdrawalRequestDecison = createAsyncThunk(
+  "wallet/requestDecision",
+  async (
+    {
+      token,
+      type,
+      id,
+    }: {
+      token: string;
+      type: string;
+      id: any;
+    },
+    { rejectWithValue }
+  ) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const payload = {
+      type: type,
+    };
+
+    try {
+      let response = await axiosInstance.patch(
+        `/admin/wallet/user/${id}/withdrawal-request`,
+        payload,
+        {
+          headers,
+        }
+      );
+      return response.data;
+    } catch (err: any) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+const withdrawaladdition = createAsyncThunk(
+  "wallet/add",
+  async (
+    {
+      token,
+      amount,
+      id,
+    }: {
+      token: string;
+      amount: string;
+      id: any;
+    },
+    { rejectWithValue }
+  ) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const payload = {
+      amount: amount,
+    };
+
+    try {
+      let response = await axiosInstance.patch(
+        `/admin/wallet/user/${id}/add`,
+        payload,
+        {
+          headers,
+        }
+      );
       return response.data;
     } catch (err: any) {
       if (!err.response) {
@@ -167,5 +255,12 @@ const walletSlice = createSlice({
   },
 });
 
-export { getWalletData, getWithdrawalRequest, getWalletDetail, updateWithdrawalThreshold };
+export {
+  getWalletData,
+  getWithdrawalRequest,
+  getWalletDetail,
+  updateWithdrawalThreshold,
+  withdrawalRequestDecison,
+  withdrawaladdition,
+};
 export default walletSlice.reducer;
