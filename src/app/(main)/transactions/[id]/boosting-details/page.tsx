@@ -25,7 +25,7 @@ function BoostingDetailsPage({}) {
                         </div>
                         <div className={"flex gap-[4px]"}>
                             <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
-                            <p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View profile</p>
+                            {/* <p className={"cursor-pointer font-medium text-[14px] text-light-green"}>View profile</p> */}
                         </div>
                     </div>
                     <div className={"flex gap-[24px] items-center-center"}>

@@ -149,9 +149,9 @@ const Page = ({}) => {
                 <p className={"text-[14px] font-medium"}>
                   {event?.event?.owner?.fullname}
                 </p>
-                <p className={"text-[14px] font-medium text-light-green"}>
+                {/* <p className={"text-[14px] font-medium text-light-green"}>
                   View profile
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"flex gap-[24px] items-center-center"}>

@@ -119,13 +119,13 @@ function WalletDetailsPage({}) {
               <p className={"text-[14px] font-medium"}>
                 {wallet?.info?.fullname}
               </p>
-              <p
+              {/* <p
                 className={
                   "cursor-pointer font-medium text-[14px] text-light-green"
                 }
               >
                 View profile
-              </p>
+              </p> */}
             </div>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>

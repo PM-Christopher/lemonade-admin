@@ -139,9 +139,9 @@ function SubscriptionDetailsPage({}) {
               <p className="text-sm font-medium">
                 {subscription?.info?.fullname}
               </p>
-              <p className="cursor-pointer font-medium text-sm text-light-green">
+              {/* <p className="cursor-pointer font-medium text-sm text-light-green">
                 View profile
-              </p>
+              </p> */}
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
