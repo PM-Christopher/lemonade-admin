@@ -26,7 +26,7 @@ function SuspendModal({isOpen, toggle, id}: DeactivateModalProps) {
         if (authToken && id) {
             dispatch(eventAction({token: authToken, id, actionType: "suspend"})).then((res: any) => {
                 console.log({res})
-                if (res.status === 200) {
+                if (res.payload.status === true) {
                     toggle();
                 }
             })

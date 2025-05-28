@@ -52,6 +52,47 @@ const getReportDetail = createAsyncThunk("report/getReportDetail", async ({ toke
     }
 });
 
+
+const resolveReport = createAsyncThunk("report/markReport", async ({ token, id }: { token: string, id: number }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        let response = await axiosInstance.patch(`/admin/reports/${id}`, { headers });
+        return response.data;
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
+
+
+
+const deleteReport = createAsyncThunk("report/getReportDetail", async ({ token, id }: { token: string, id: number }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        let response = await axiosInstance.delete(`/admin/reports/${id}/delete-content`, { headers });
+        return response.data;
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
+
+
+
 const eventSlice = createSlice({
     name: "report",
     initialState,
@@ -86,5 +127,5 @@ const eventSlice = createSlice({
     }
 });
 
-export { getReportData, getReportDetail }
+export { getReportData, getReportDetail, resolveReport, deleteReport}
 export default eventSlice.reducer;
