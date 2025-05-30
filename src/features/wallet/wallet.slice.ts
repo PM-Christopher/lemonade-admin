@@ -247,7 +247,7 @@ const walletSlice = createSlice({
     builder.addCase(getWalletDetail.fulfilled, (state, { payload }) => {
       state.loading = false;
       // store wallet detail
-      state.walletDetail = payload.data.info;
+      state.walletDetail = payload.data;
     });
     builder.addCase(getWalletDetail.rejected, (state) => {
       state.loading = false;

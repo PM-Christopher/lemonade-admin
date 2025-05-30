@@ -14,6 +14,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { getWalletDetail } from "@/features/wallet/wallet.slice";
 import SkeletonLoader from "@/components/global/SkeletonLoader";
 import { capitalizeWords } from "@/utils/helper";
+import { formatNumberWithCommas } from "@/lib/formatNumber";
 
 function WalletDetailsPage({}) {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -26,7 +27,10 @@ function WalletDetailsPage({}) {
   const { authToken } = useSelector((state: RootState) => state.auth);
   const { walletDetail, loading: walletLoading } = useSelector(
     (state: RootState) => state.wallet
-  ) as { walletDetail: { status?: string } | null; loading: boolean };
+  ) as {
+    walletDetail: { status?: string; info: any; history?: any } | null;
+    loading: boolean;
+  };
 
   const id = params.id
     ? Array.isArray(params.id)
@@ -39,6 +43,12 @@ function WalletDetailsPage({}) {
       dispatch(getWalletDetail({ token: authToken, id }));
     }
   }, [id]);
+
+  const reloadFunc = () => {
+    if (id && authToken) {
+      dispatch(getWalletDetail({ token: authToken, id }));
+    }
+  };
 
   // side menu state
   const [isPayoutOpen, setIsPayoutOpen] = React.useState(false);
@@ -94,8 +104,8 @@ function WalletDetailsPage({}) {
             className={"w-[64px] h-[64px] rounded-full bg-light-black"}
           ></div>
 
-          {walletDetail ? (
-            Object.entries(walletDetail)
+          {walletDetail?.info ? (
+            Object.entries(walletDetail?.info)
               .filter(([key]) => key !== "amount") // Exclude 'amount'
               .map(([key, value]) => (
                 <div key={key} className="flex gap-[24px] items-center">
@@ -156,7 +166,11 @@ function WalletDetailsPage({}) {
         </div>
 
         {/* details */}
-        <div className={"h-[762px] bg-white rounded-[12px] w-full lg:w-2/3 flex flex-col"}>
+        <div
+          className={
+            "h-[762px] bg-white rounded-[12px] w-full lg:w-2/3 flex flex-col"
+          }
+        >
           <div className={"p-[24px] border-b-[1px] border-b-grey-20"}>
             <p className={"text-[16px] font-semiBold"}>Wallet summary</p>
           </div>
@@ -188,7 +202,12 @@ function WalletDetailsPage({}) {
                   <p className={"font-normal text-text-grey text-[14px]"}>
                     Total amount earned
                   </p>
-                  <p className={"text-[18px] font-semiBold"}>N300,000</p>
+                  <p className={"text-[18px] font-semiBold"}>
+                    ₦{" "}
+                    {formatNumberWithCommas(
+                      walletDetail?.history[0]?.wallet?.balance || 0
+                    )}
+                  </p>
                 </div>
                 <ChevronRight className={"cursor-pointer"} />
               </div>
@@ -201,7 +220,10 @@ function WalletDetailsPage({}) {
                   <p className={"font-normal text-text-grey text-[14px]"}>
                     Referral earning
                   </p>
-                  <p className={"text-[18px] font-semiBold"}>N200,000</p>
+                  <p className={"text-[18px] font-semiBold"}>
+                    {" "}
+                    ₦ {formatNumberWithCommas(0)}
+                  </p>
                 </div>
                 <ChevronRight className={"cursor-pointer"} />
               </div>
@@ -210,7 +232,10 @@ function WalletDetailsPage({}) {
                   <p className={"font-normal text-text-grey text-[14px]"}>
                     Affiliate earning
                   </p>
-                  <p className={"text-[18px] font-semiBold"}>N100,000</p>
+                  <p className={"text-[18px] font-semiBold"}>
+                    {" "}
+                    ₦ {formatNumberWithCommas(0)}
+                  </p>
                 </div>
                 <ChevronRight className={"cursor-pointer"} />
               </div>
@@ -218,12 +243,14 @@ function WalletDetailsPage({}) {
           </div>
         </div>
       </section>
-      <WithdrawalApproval isOpen={isOpen} toggle={toggleWithdrawalAction} />
-      <WithdrawalReject isOpen={isRejectOpen} toggle={toggleWithdrawalReject} />
+      <WithdrawalApproval isOpen={isOpen} toggle={toggleWithdrawalAction}  reload={reloadFunc}/>
+      <WithdrawalReject isOpen={isRejectOpen} toggle={toggleWithdrawalReject} reload={reloadFunc}/>
       <UpdateBalance
         isOpen={isUpdateOpen}
         toggle={toggleUpdateBalance}
         updateType={updateType}
+        userDetails={walletDetail}
+        reload={reloadFunc}
       />
 
       <PayoutHistory

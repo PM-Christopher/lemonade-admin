@@ -2,17 +2,19 @@
 import React, { useEffect, useState } from "react";
 import { PrinterIcon } from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getWalletDetail } from "@/features/transaction/transaction.slice";
 import { capitalizeWords } from "@/utils/helper";
 import PaginationComp from "@/components/global/Pagination";
+import { formatNumberWithCommas } from "@/lib/formatNumber";
 
 function WalletDetailsPage({}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const params = useParams();
+        const router = useRouter()
   const id = params.id
     ? Array.isArray(params.id)
       ? parseInt(params.id[0])
@@ -119,13 +121,14 @@ function WalletDetailsPage({}) {
               <p className={"text-[14px] font-medium"}>
                 {wallet?.info?.fullname}
               </p>
-              {/* <p
+              <p
                 className={
                   "cursor-pointer font-medium text-[14px] text-light-green"
                 }
+                              onClick={() => router.push(`/users/${wallet?.history[0]?.user_id}`)}
               >
                 View profile
-              </p> */}
+              </p>
             </div>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
@@ -134,7 +137,9 @@ function WalletDetailsPage({}) {
                 Transaction Id:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>WA112332</p>
+            <p className={"text-[14px] font-medium"}>
+              {wallet?.history[0]?.wallet_id}
+            </p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -142,7 +147,9 @@ function WalletDetailsPage({}) {
                 Date Paid:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>{wallet?.info?.date_paid}</p>
+            <p className={"text-[14px] font-medium"}>
+              {wallet?.info?.date_paid}
+            </p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -150,7 +157,9 @@ function WalletDetailsPage({}) {
                 Amount:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>N{wallet?.info?.amount}</p>
+            <p className={"text-[14px] font-medium"}>
+              N{formatNumberWithCommas(wallet?.info?.amount || 0)}
+            </p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -202,7 +211,8 @@ function WalletDetailsPage({}) {
                   <div className="flex justify-between">
                     <div className="flex flex-col">
                       <p className={"font-medium text-[14px]"}>
-                        {item?.wallet?.wallet_id} - ₦{item?.amount}
+                        {item?.wallet?.wallet_id} - ₦
+                        {formatNumberWithCommas(item?.amount)}
                       </p>
                       <p className={"text-text-grey font-normal text-[12px]"}>
                         23, Mar 2023. 05:00PM

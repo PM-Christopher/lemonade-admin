@@ -7,17 +7,22 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useFormik } from "formik";
 import { withdrawaladdition } from "@/features/wallet/wallet.slice";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
+import { formatNumberWithCommas } from "@/lib/formatNumber";
 
 type UpdateBalanceInterface = {
   isOpen: boolean;
   toggle: () => void;
   updateType: string;
+  userDetails?: any;
+  reload?: any
 };
 
 const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
   isOpen,
   toggle,
   updateType,
+  userDetails,
+  reload
 }) => {
   if (!isOpen) return null;
 
@@ -66,6 +71,11 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
               })
             );
             toggle();
+
+            if (reload) {
+              reload();
+            }
+
           } else {
             setLoading(false);
             dispatch(
@@ -118,7 +128,7 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
                 "bg-light-grey h-[48px] rounded-[12px] py-[12px] px-[12px] border-none"
               }
               placeholder={"Amount"}
-                value={formik.values.amount}
+              value={formik.values.amount}
               onChange={formik.handleChange("amount")}
               onBlur={formik.handleBlur}
               id="amount"
@@ -127,7 +137,13 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
 
           <p className={"font-normal text-[14px]"}>
             Wallet balance:{" "}
-            <span className={"font-bold text-[14px]"}>₦300,000</span>
+            <span className={"font-bold text-[14px]"}>
+              {" "}
+              ₦{" "}
+              {formatNumberWithCommas(
+                userDetails?.history[0]?.wallet?.balance || 0
+              )}
+            </span>
           </p>
 
           <div className={"flex justify-between gap-[16px]"}>

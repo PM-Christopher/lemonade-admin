@@ -9,11 +9,13 @@ import { useParams } from "next/navigation";
 type WithdrawalRejectInterface = {
   isOpen: boolean;
   toggle: () => void;
+   reload?: any
 };
 
 const WithdrawalReject: React.FC<WithdrawalRejectInterface> = ({
   isOpen,
   toggle,
+  reload
 }) => {
   if (!isOpen) return null;
   const params = useParams();
@@ -48,6 +50,9 @@ const WithdrawalReject: React.FC<WithdrawalRejectInterface> = ({
             })
           );
           toggle();
+            if (reload) {
+              reload();
+            }
         } else {
           setLoading(false);
           dispatch(

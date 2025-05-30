@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import MainLayout from "@/components/layouts/MainLayout";
 import { ChevronDown, ChevronRight, PrinterIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getPlanSubscription } from "@/features/transaction/transaction.slice";
@@ -12,6 +12,7 @@ import PaginationComp from "@/components/global/Pagination";
 function SubscriptionDetailsPage({}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+      const router = useRouter()
 
   const params = useParams();
   const dispatch = useDispatch<AppDispatch>();
@@ -139,9 +140,11 @@ function SubscriptionDetailsPage({}) {
               <p className="text-sm font-medium">
                 {subscription?.info?.fullname}
               </p>
-              {/* <p className="cursor-pointer font-medium text-sm text-light-green">
+              <p className="cursor-pointer font-medium text-sm text-light-green" 
+              onClick={() => router.push(`/users/${subscription?.info?.user_id}`)}
+              >
                 View profile
-              </p> */}
+              </p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">

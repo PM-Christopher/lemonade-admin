@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { PrinterIcon } from "lucide-react";
 import MainLayout from "@/components/layouts/MainLayout";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getEventDetail } from "@/features/transaction/transaction.slice";
@@ -12,6 +12,7 @@ import PaginationComp from "@/components/global/Pagination";
 function EventDetailsPage({}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+      const router = useRouter()
 
   const params = useParams();
   const id = params.id
@@ -118,13 +119,15 @@ function EventDetailsPage({}) {
               <p className={"text-[14px] font-medium"}>
                 {event?.info?.organizer}
               </p>
-              {/* <p
+              <p
                 className={
                   "cursor-pointer font-medium text-[14px] text-light-green"
                 }
+
+                              onClick={() => router.push(`/users/${event?.info?.user_id}`)}
               >
                 View profile
-              </p> */}
+              </p>
             </div>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
@@ -133,7 +136,7 @@ function EventDetailsPage({}) {
                 Transaction Id:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>EV112332</p>
+            <p className={"text-[14px] font-medium"}>{event?.info?.transaction_id}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -141,7 +144,7 @@ function EventDetailsPage({}) {
                 Amount:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>N30,000</p>
+            <p className={"text-[14px] font-medium"}>N0</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>

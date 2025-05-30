@@ -10,11 +10,13 @@ import { updateToastifyReducer } from "@/redux/toastifySlice";
 type WithdrawalActionInterface = {
   isOpen: boolean;
   toggle: () => void;
+  reload?: any
 };
 
 const WithdrawalApproval: React.FC<WithdrawalActionInterface> = ({
   isOpen,
   toggle,
+  reload
 }) => {
   if (!isOpen) return null;
 
@@ -50,6 +52,9 @@ const WithdrawalApproval: React.FC<WithdrawalActionInterface> = ({
             })
           );
           toggle();
+           if (reload) {
+              reload();
+            }
         } else {
           setLoading(false);
           dispatch(

@@ -258,7 +258,7 @@ export const servicesData = [
     }
 ]
 
-export const eventsHeaders = ["TXN ID", "EVENT NAME", "ORGANIZER NAME", "AMOUNT", "TICKETS SOLD", "DATE PAID", "STATUS"]
+export const eventsHeaders = ["ID", "EVENT NAME", "ORGANIZER NAME", "AMOUNT", "TICKETS SOLD", "DATE PAID", "STATUS"]
 export const eventsData = [
     {
         "TXN ID": "TE12343",

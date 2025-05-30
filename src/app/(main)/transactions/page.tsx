@@ -34,7 +34,9 @@ function TransactionsPage({}) {
     // add other properties as needed
   };
 
-  const { trxData } = useSelector((state: RootState) => state.transaction) as { trxData: TrxDataType };
+  const { trxData } = useSelector((state: RootState) => state.transaction) as {
+    trxData: TrxDataType;
+  };
 
   const switchOption = (option: string) => {
     setMenuOption(option);
@@ -84,12 +86,14 @@ function TransactionsPage({}) {
     }
   };
 
+  console.log("trxData", trxData);
+
   return (
     <MainLayout>
       <section className="flex flex-col gap-[20px] mt-[20px]">
         <div className={"px-[20px] flex justify-between"}>
           <p className={"text-[16px] font-semiBold"}>
-            {trxData?.subscribers || 0} Transactions
+            {trxData?.subscribers || trxData?.history?.length || 0} Transactions
           </p>
           <div className={"flex justify-between gap-[12px]"}>
             {/* <div
