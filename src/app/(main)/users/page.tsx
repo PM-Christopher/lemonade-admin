@@ -17,9 +17,12 @@ import { getUserData } from "@/features/user/user.slice";
 import { getCSV } from "@/features/exports/export.slice";
 import { downloadCSV } from "@/utils/helper";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
+import useDebounce from "@/hooks/useDebounce";
+import useSearchParams from "@/hooks/useSearchParams";
 
 function UsersPage({}) {
   const [menuOption, setMenuOption] = useState("users");
+  const [searchValue, setSearchValue] = useState("");
   const dispatch = useDispatch<AppDispatch>();
 
   const [isLoading, setLoading] = useState(false);
@@ -86,7 +89,11 @@ function UsersPage({}) {
       });
   };
 
-
+  const { debouncedValue } = useDebounce(searchValue, 500);
+  const { setSearchParams } = useSearchParams();
+  useEffect(() => {
+    setSearchParams({ q: debouncedValue });
+  }, [debouncedValue]);
 
   return (
     <MainLayout>
@@ -106,6 +113,7 @@ function UsersPage({}) {
                   type="text"
                   className="rounded-xl text-[14px] bg-light-grey focus:outline-none focus:ring-0 focus:border-transparent w-full py-4"
                   placeholder="Search user, email, ID, location..."
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
             </div>
