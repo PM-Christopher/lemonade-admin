@@ -11,6 +11,7 @@ function UsersViews({ userData }: any) {
   const router = useRouter();
   const { searchParams } = useSearchParams();
   const query = searchParams?.get("q");
+  const status = searchParams?.get("status");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -26,21 +27,29 @@ function UsersViews({ userData }: any) {
   useEffect(() => {
     if (!userData) return;
 
-    if (!query || query.trim() === "") {
+    if ((!query && !status) || query?.trim() === "") {
       setData(userData.users);
     } else {
-      const q = query.toLowerCase()?.trim();
-      const filtered = userData.users.filter(
-        (user: any) =>
+      const q = query?.toLowerCase()?.trim();
+      const s = status?.toLowerCase()?.trim();
+
+      const filtered = userData.users.filter((user: any) => {
+        const matchesQuery =
+          !q ||
           user?.location?.toLowerCase().includes(q) ||
           user?.fullname?.toLowerCase().includes(q) ||
-          user?.email?.toLowerCase().includes(q)
-      );
+          user?.email?.toLowerCase().includes(q);
+
+        const matchesStatus = !s || user?.status?.toLowerCase() === s;
+
+        return matchesQuery && matchesStatus;
+      });
+
       setData(filtered);
     }
 
     setCurrentPage(1); // Reset to first page on search
-  }, [query, userData]);
+  }, [query, status, userData]);
 
   // Calculate pagination from filtered data
   const totalPages = Math.ceil(data?.length / perPage);

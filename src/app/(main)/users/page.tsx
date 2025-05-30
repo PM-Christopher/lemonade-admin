@@ -19,10 +19,19 @@ import { downloadCSV } from "@/utils/helper";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
 import useDebounce from "@/hooks/useDebounce";
 import useSearchParams from "@/hooks/useSearchParams";
+import { Select } from "antd";
 
 function UsersPage({}) {
+  const statusOptions = [
+    "Clear selection",
+    "Active",
+    "Inactive",
+    "Suspended",
+    "Deactivated",
+  ];
   const [menuOption, setMenuOption] = useState("users");
   const [searchValue, setSearchValue] = useState("");
+  const [status, setStatus] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
 
   const [isLoading, setLoading] = useState(false);
@@ -95,6 +104,16 @@ function UsersPage({}) {
     setSearchParams({ q: debouncedValue });
   }, [debouncedValue]);
 
+  useEffect(() => {
+    if (!["", "status"].includes(status)) {
+      if (status === "clear selection") {
+        setSearchParams({ status: "" });
+      } else {
+        setSearchParams({ status });
+      }
+    }
+  }, [status]);
+
   return (
     <MainLayout>
       <section className="flex flex-col gap-[20px] mt-[20px]">
@@ -117,18 +136,18 @@ function UsersPage({}) {
                 />
               </div>
             </div>
-            <div
-              className={
-                "flex border-[1px] border-grey-20 bg-none w-[193px] h-[40px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
-              }
-            >
-              <div className={"flex justify-between items-center"}>
-                <p className={"text-[12px] font-semiBold text-text-grey"}>
-                  STATUS
-                </p>
-              </div>
-              <ChevronDown className={"text-text-grey w-[20px]"} />
-            </div>
+            <Select
+              suffixIcon={<ChevronDown className="text-text-grey w-[20px]" />}
+              defaultValue="Status"
+              className="w-[193px] h-[40px] text-[12px] font-semiBold text-text-grey rounded-[12px] focus:!border-light-green-50"
+              options={statusOptions.map((status) => ({
+                label: status,
+                value: status.toLowerCase(),
+              }))}
+              onChange={(value) => {
+                setStatus(value);
+              }}
+            />
             <div
               className={
                 "flex border-[1px] border-grey-20 bg-none w-[193px] h-[40px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
