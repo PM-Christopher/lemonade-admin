@@ -214,7 +214,8 @@ function SubscriptionDetailsPage({}) {
               {/* Premium Plan Card */}
               <div className="flex flex-col px-4 md:px-6 py-6 md:py-8 gap-2 border-b-4 border-b-step-color bg-green-tint rounded-xl">
                 <p className="text-mid-green font-semibold text-base">
-                  PREMIUM
+                  {/* PREMIUM */}
+                  {subscription?.info?.plan}
                 </p>
                 <p className="font-bold text-xl md:text-2xl">
                   ₦{subscription?.plan?.cost}

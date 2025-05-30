@@ -142,7 +142,7 @@ function WalletDetailsPage({}) {
                 Date Paid:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+            <p className={"text-[14px] font-medium"}>{wallet?.info?.date_paid}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
