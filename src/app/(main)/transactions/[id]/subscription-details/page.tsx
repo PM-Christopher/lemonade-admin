@@ -177,14 +177,14 @@ function SubscriptionDetailsPage({}) {
                 Subscription Type: 
               </p>
             </div>
-            <p className="text-sm font-medium">{subscription?.history[0].subscription_type}</p>
+            <p className="text-sm font-medium capitalize">{subscription?.history[0].subscription_type}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
             <div className="min-w-20 sm:w-28">
               <p className="text-text-grey text-xs font-medium">Date Paid:</p>
             </div>
             <p className="text-sm font-medium">
-              {subscription?.history[0]?.created_at || null}
+              {subscription?.history[0]?.date_paid || null}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
