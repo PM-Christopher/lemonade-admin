@@ -137,9 +137,9 @@ function WalletDetailsPage({}) {
               ))}
             </>
           )}
-
+          
           {/* && walletDetail.status === "pending"  */}
-          {walletDetail && (
+          {walletDetail && walletDetail?.info?.status?.toLowerCase() !== "approved" && (
             <div className={"flex justify-between gap-[16px]"}>
               <button
                 className={
