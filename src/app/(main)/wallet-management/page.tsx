@@ -19,6 +19,7 @@ import {
   getWithdrawalRequest,
 } from "@/features/wallet/wallet.slice";
 import { AppDispatch, RootState } from "@/redux/store";
+import dayjs from "dayjs";
 
 function WalletMgtPage({}) {
   const [editThreshold, setEditThreshold] = useState(false);
@@ -190,16 +191,16 @@ function WalletMgtPage({}) {
             >
               <DataCard
                 title={"Wallet Revenue"}
-                count={withdrawalRequests?.wallet_revenue || 0}
+                count={walletData?.wallet_revenue?.toLocaleString() || 0}
                 isPrice={true}
               />
               <DataCard
                 title={"Total Wallets"}
-                count={withdrawalRequests?.history?.length || 0}
+                count={walletData?.total_wallets?.toLocaleString() || 0}
               />
               <DataCard
                 title={"Withdrawal Threshold"}
-                count={walletData?.withdrawal_threshold || 0}
+                count={walletData?.withdrawal_threshold?.toLocaleString() || 0}
                 isPrice={true}
                 isEditable={true}
                 handleChange={toggleEditThreshold}
@@ -230,18 +231,21 @@ function WalletMgtPage({}) {
                         }
                       >
                         <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.txn_id}
+                          {row?.txn_id ?? "N/A"}
                         </td>
                         <td className={"p-4 font-medium text-sm font-sans"}>
                           {row.fullname}
                         </td>
                         <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.amount}
+                          ₦{row.amount}
                         </td>
                         <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.created_at}
+                          {dayjs(row.created_at).format("YYYY-MM-DD hh:mm:ss A")}
                         </td>
                         <td className={"p-4 font-medium text-sm font-sans"}>
+                          {dayjs(row.date_paid).format("YYYY-MM-DD hh:mm:ss A")}
+                        </td>
+                        <td className={"p-4 font-medium text-sm font-sans capitalize"}>
                           {row.status}
                         </td>
                       </tr>

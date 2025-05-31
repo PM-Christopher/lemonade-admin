@@ -31,6 +31,7 @@
     "country-codes-list": "^1.6.11",
     "country-list": "^2.3.0",
     "country-list-with-dial-code-and-flag": "^5.0.6",
+    "dayjs": "^1.11.13",
     "draft-js": "^0.11.7",
     "evergreen-ui": "^7.1.9",
     "formik": "^2.4.6",
