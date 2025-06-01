@@ -15,6 +15,7 @@ import { getWalletDetail } from "@/features/wallet/wallet.slice";
 import SkeletonLoader from "@/components/global/SkeletonLoader";
 import { capitalizeWords } from "@/utils/helper";
 import { formatNumberWithCommas } from "@/lib/formatNumber";
+import dayjs from "dayjs";
 
 function WalletDetailsPage({}) {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -118,7 +119,9 @@ function WalletDetailsPage({}) {
                     <SkeletonLoader />
                   ) : (
                     <p className="text-[14px] font-medium">
-                      {formatValue(value)}
+                      {key === "date_paid"
+                        ? dayjs(value as string).format("YYYY-MM-DD hh:mm:ssA")
+                        : formatValue(value)}
                     </p>
                   )}
                 </div>
@@ -139,30 +142,31 @@ function WalletDetailsPage({}) {
           )}
 
           {/* && walletDetail.status === "pending"  */}
-          {walletDetail && (
-            <div className={"flex justify-between gap-[16px]"}>
-              <button
-                className={
-                  "border-[1px] border-light-grey-50 px-[48px] py-[11px] rounded-[12px] bg-white w-full"
-                }
-                onClick={toggleWithdrawalReject}
-              >
-                <p className={"text-black text-[16px] font-medium"}>
-                  Reject withdrawal
-                </p>
-              </button>
-              <button
-                className={
-                  "border-[1px] border-step-color px-[48px] py-[11px] rounded-[12px] bg-gradient-green w-full"
-                }
-                onClick={toggleWithdrawalAction}
-              >
-                <p className={"text-[16px] font-medium text-white"}>
-                  Approve Withdrawal
-                </p>
-              </button>
-            </div>
-          )}
+          {walletDetail &&
+            walletDetail?.info?.status?.toLowerCase() !== "approved" && (
+              <div className={"flex justify-between gap-[16px]"}>
+                <button
+                  className={
+                    "border-[1px] border-light-grey-50 px-[48px] py-[11px] rounded-[12px] bg-white w-full"
+                  }
+                  onClick={toggleWithdrawalReject}
+                >
+                  <p className={"text-black text-[16px] font-medium"}>
+                    Reject withdrawal
+                  </p>
+                </button>
+                <button
+                  className={
+                    "border-[1px] border-step-color px-[48px] py-[11px] rounded-[12px] bg-gradient-green w-full"
+                  }
+                  onClick={toggleWithdrawalAction}
+                >
+                  <p className={"text-[16px] font-medium text-white"}>
+                    Approve Withdrawal
+                  </p>
+                </button>
+              </div>
+            )}
         </div>
 
         {/* details */}
@@ -243,8 +247,16 @@ function WalletDetailsPage({}) {
           </div>
         </div>
       </section>
-      <WithdrawalApproval isOpen={isOpen} toggle={toggleWithdrawalAction}  reload={reloadFunc}/>
-      <WithdrawalReject isOpen={isRejectOpen} toggle={toggleWithdrawalReject} reload={reloadFunc}/>
+      <WithdrawalApproval
+        isOpen={isOpen}
+        toggle={toggleWithdrawalAction}
+        reload={reloadFunc}
+      />
+      <WithdrawalReject
+        isOpen={isRejectOpen}
+        toggle={toggleWithdrawalReject}
+        reload={reloadFunc}
+      />
       <UpdateBalance
         isOpen={isUpdateOpen}
         toggle={toggleUpdateBalance}
