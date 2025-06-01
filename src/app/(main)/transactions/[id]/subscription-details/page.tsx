@@ -21,26 +21,7 @@ function SubscriptionDetailsPage({}) {
     (state: RootState) => state.transaction
   ) as { subscription: any; loading: boolean };
 
-  const paymentHistoryData = [
-    {
-      id: "TX123234",
-      title: "Lemonade-Premium",
-      date: "04 Apr, 2024",
-      price: "N23,000",
-    },
-    {
-      id: "TX123234",
-      title: "Lemonade-Premium",
-      date: "04 Apr, 2024",
-      price: "N23,000",
-    },
-    {
-      id: "TX123234",
-      title: "Lemonade-Premium",
-      date: "04 Apr, 2024",
-      price: "N23,000",
-    },
-  ];
+ 
 
   const id = params.id
     ? Array.isArray(params.id)

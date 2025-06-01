@@ -12,7 +12,7 @@ import PaginationComp from "@/components/global/Pagination";
 function EventDetailsPage({}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-      const router = useRouter()
+  const router = useRouter();
 
   const params = useParams();
   const id = params.id
@@ -123,8 +123,7 @@ function EventDetailsPage({}) {
                 className={
                   "cursor-pointer font-medium text-[14px] text-light-green"
                 }
-
-                              onClick={() => router.push(`/users/${event?.info?.user_id}`)}
+                onClick={() => router.push(`/users/${event?.info?.user_id}`)}
               >
                 View profile
               </p>
@@ -136,7 +135,9 @@ function EventDetailsPage({}) {
                 Transaction Id:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>{event?.info?.transaction_id}</p>
+            <p className={"text-[14px] font-medium"}>
+              {event?.info?.transaction_id}
+            </p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
