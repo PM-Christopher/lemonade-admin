@@ -318,7 +318,10 @@ function UserDetailsPage({}) {
                 Social Links:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>Links here</p>
+
+            {user?.social_links?.map((item: any) => (
+              <a className={"text-[14px] font-medium"} href={item?.value}>{item?.name}</a>
+            ))}
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -405,7 +408,7 @@ function UserDetailsPage({}) {
         isOpen={suspendModalOpen}
         toggle={toggleSuspendModalOpen}
         id={id}
-          reload={reloadFunc}
+        reload={reloadFunc}
       />
     </MainLayout>
   );
