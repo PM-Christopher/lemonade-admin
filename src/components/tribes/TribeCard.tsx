@@ -3,7 +3,7 @@ import Image from "next/image";
 import {ChevronRight} from "lucide-react";
 import {ChatIcon} from "evergreen-ui";
 
-const TribeCard = ({}) => {
+const TribeCard = ({tribeDetails}: {tribeDetails: any}) => {
     return (
         <div className="px-[24px]">
             <div className="bg-mid-grey rounded-[16px] mb-2 border-[1px] border-grey-30">
@@ -14,11 +14,11 @@ const TribeCard = ({}) => {
                         </div>
                         <div className="flex flex-col">
                             <div>
-                                <p className="font-sans text-[14px] font-semibold">Tribe name</p>
+                                <p className="font-sans text-[14px] font-semibold">{tribeDetails?.name}</p>
                             </div>
                             <div>
                                 <p className="font-sans font-normal text-[12px] text-text-grey">Created
-                                    on 23 Mar, 2024</p>
+                                    on {tribeDetails?.created_at}</p>
                             </div>
                         </div>
                     </div>
@@ -27,17 +27,17 @@ const TribeCard = ({}) => {
                 <div className="flex justify-between p-4 bg-mid-grey rounded-b-[16px] py-6">
                     <div>
                         <p className="font-sans font-semi-normal text-[12px] leading-[14.4px] text-black-light">
-                            Engineering
+                            {tribeDetails?.category}
                         </p>
                     </div>
                     <div>
                         <p className="font-sans font-semi-normal text-[12px] leading-[14.4px] text-black-light">
-                            23 Members</p>
+                            {tribeDetails?.members} Members</p>
                     </div>
                     <div className="flex gap-2 items-center">
                         <ChatIcon/>
                         <p className="font-sans font-semi-normal text-[12px] leading-[14.4px] text-black-light">
-                            11k threads
+                            {tribeDetails?.threads} threads
                         </p>
                     </div>
                 </div>

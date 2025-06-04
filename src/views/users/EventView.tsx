@@ -7,6 +7,9 @@ interface EventViewProps {
 }
 
 const EventView: React.FC<EventViewProps> = ({userDetail}) => {
+    console.log({
+        userDetail,
+    })
     return (
         <div className="flex flex-col gap-[24px]">
             <div className={"px-[24px] pt-[24px] p-[16px]"}>
@@ -25,26 +28,22 @@ const EventView: React.FC<EventViewProps> = ({userDetail}) => {
             </div>
             <div className={"p-[24px]"}>
                 <div className={"flex gap-[24px] flex-wrap"}>
-                    <div className={"p-[4px] rounded-[12px] flex flex-col border-[1px] w-fit gap-[4px]"}>
-                        <Image src={"/images/event_images/agent_image.png"} alt={""} width={155.5} height={155.5}/>
-                        <p className={"font-semiBold text-[14px]"}>Halloween party</p>
-                        <div className={"flex items-center gap-[4px]"}>
-                            <CalendarIcon className={"w-[12px]"}/>
-                            <p className={"text-[12px] font-normal text-text-grey"}>Mon, 23 Mar</p>
-                            <Dot className={"text-text-grey"}/>
-                            <p className={"text-[12px] font-normal text-text-grey"}>4PM</p>
-                        </div>
-                    </div>
-                    <div className={"p-[4px] rounded-[12px] flex flex-col border-[1px] w-fit gap-[4px]"}>
-                        <Image src={"/images/event_images/agent_image.png"} alt={""} width={155.5} height={155.5}/>
-                        <p className={"font-semiBold text-[14px]"}>Halloween party</p>
-                        <div className={"flex items-center gap-[4px]"}>
-                            <CalendarIcon className={"w-[12px]"}/>
-                            <p className={"text-[12px] font-normal text-text-grey"}>Mon, 23 Mar</p>
-                            <Dot className={"text-text-grey"}/>
-                            <p className={"text-[12px] font-normal text-text-grey"}>4PM</p>
-                        </div>
-                    </div>
+                    {
+                        userDetail?.events?.length > 0 ? (
+                            userDetail?.events?.map((item: any, index: number) => (
+                                <div className={"p-[4px] rounded-[12px] flex flex-col border-[1px] w-[163.5px] gap-[4px]"} key={index}>
+                                    <Image src={item?.image} alt={""} width={155.5} height={155.5} className={'rounded-[12px]'}/>
+                                    <p className={"font-semiBold text-[14px] truncate"}>{item?.name}</p>
+                                    <div className={"flex items-center gap-[4px]"}>
+                                        <CalendarIcon className={"w-[12px]"}/>
+                                        <p className={"text-[12px] font-normal text-text-grey"}>{item.date}</p>
+                                        <Dot className={"text-text-grey"}/>
+                                        <p className={"text-[12px] font-normal text-text-grey"}>{item.time}</p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (<></>)
+                    }
                 </div>
             </div>
         </div>
