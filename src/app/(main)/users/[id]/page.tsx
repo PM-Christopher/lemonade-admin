@@ -15,7 +15,7 @@ import BusinessView from "@/views/users/BusinessView";
 import EventView from "@/views/users/EventView";
 import WalletView from "@/views/users/WalletView";
 import BalanceModal from "@/modals/users/BalanceModal";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getEventDetail } from "@/features/transaction/transaction.slice";
@@ -30,6 +30,7 @@ import suspendModal from "@/modals/users/SuspendModal";
 import Image from "next/image";
 
 function UserDetailsPage({}) {
+  const router = useRouter();
   const currentPage: number = 1;
   const totalPages: number = 10;
   const params = useParams();
@@ -74,6 +75,13 @@ function UserDetailsPage({}) {
       dispatch(getUserDetail({ token: authToken, id }));
     }
   }, []);
+
+  const reloadFunc = () => {
+    // if (authToken && id) {
+    //   dispatch(getUserDetail({ token: authToken, id }));
+    // }
+    router.refresh();
+  };
 
   const [menuOption, setMenuOption] = useState("activities-log");
   const [tribeOpen, setTribeOpen] = useState(false);
@@ -125,6 +133,7 @@ function UserDetailsPage({}) {
   const reactivateUser = () => {
     if (authToken && id) {
       dispatch(userAction({ token: authToken, id, actionType: "reactivate" }));
+      reloadFunc();
     }
   };
 
@@ -390,11 +399,13 @@ function UserDetailsPage({}) {
         isOpen={deactivateModalOpen}
         toggle={toggleDeactivateModalOpen}
         id={id}
+        reload={reloadFunc}
       />
       <SuspendModal
         isOpen={suspendModalOpen}
         toggle={toggleSuspendModalOpen}
         id={id}
+          reload={reloadFunc}
       />
     </MainLayout>
   );
