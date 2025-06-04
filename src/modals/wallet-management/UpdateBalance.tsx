@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useFormik } from "formik";
-import { withdrawaladdition } from "@/features/wallet/wallet.slice";
+import {
+  withdrawaladdition,
+  withdrawaldeduction,
+} from "@/features/wallet/wallet.slice";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
 import { formatNumberWithCommas } from "@/lib/formatNumber";
 
@@ -52,32 +55,44 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
       amount: "",
     },
     onSubmit: (values) => {
-      dispatch(
-        withdrawaladdition({
-          token: authToken || "",
-          id: id,
-          amount: values.amount,
-        })
-      )
-        .then((res) => {
-          setLoading(false);
-
-          if (res.payload.status) {
+      if (updateType === "add" || updateType === "") {
+        dispatch(
+          withdrawaladdition({
+            token: authToken || "",
+            id: id,
+            amount: values.amount,
+          })
+        )
+          .then((res) => {
             setLoading(false);
 
-            dispatch(
-              updateToastifyReducer({
-                show: true,
-                message: `Success `,
-                type: "success",
-              })
-            );
-            toggle();
+            if (res.payload.status) {
+              setLoading(false);
 
-            if (reload) {
-              reload();
+              dispatch(
+                updateToastifyReducer({
+                  show: true,
+                  message: `Success `,
+                  type: "success",
+                })
+              );
+              toggle();
+
+              if (reload) {
+                reload();
+              }
+            } else {
+              setLoading(false);
+              dispatch(
+                updateToastifyReducer({
+                  show: true,
+                  message: res.payload.message || `Something went wrong`,
+                  type: "error",
+                })
+              );
             }
-          } else {
+          })
+          .catch((res) => {
             setLoading(false);
             dispatch(
               updateToastifyReducer({
@@ -86,18 +101,55 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
                 type: "error",
               })
             );
-          }
-        })
-        .catch((res) => {
-          setLoading(false);
-          dispatch(
-            updateToastifyReducer({
-              show: true,
-              message: res.payload.message || `Something went wrong`,
-              type: "error",
-            })
-          );
-        });
+          });
+      } else {
+        dispatch(
+          withdrawaldeduction({
+            token: authToken || "",
+            id: id,
+            amount: values.amount,
+          })
+        )
+          .then((res) => {
+            setLoading(false);
+
+            if (res.payload.status) {
+              setLoading(false);
+
+              dispatch(
+                updateToastifyReducer({
+                  show: true,
+                  message: `Success `,
+                  type: "success",
+                })
+              );
+              toggle();
+
+              if (reload) {
+                reload();
+              }
+            } else {
+              setLoading(false);
+              dispatch(
+                updateToastifyReducer({
+                  show: true,
+                  message: res.payload.message || `Something went wrong`,
+                  type: "error",
+                })
+              );
+            }
+          })
+          .catch((res) => {
+            setLoading(false);
+            dispatch(
+              updateToastifyReducer({
+                show: true,
+                message: res.payload.message || `Something went wrong`,
+                type: "error",
+              })
+            );
+          });
+      }
     },
     enableReinitialize: true,
   });

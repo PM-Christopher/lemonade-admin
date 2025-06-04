@@ -212,6 +212,50 @@ const withdrawaladdition = createAsyncThunk(
   }
 );
 
+
+
+const withdrawaldeduction = createAsyncThunk(
+  "wallet/deduct",
+  async (
+    {
+      token,
+      amount,
+      id,
+    }: {
+      token: string;
+      amount: string;
+      id: any;
+    },
+    { rejectWithValue }
+  ) => {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const payload = {
+      amount: amount,
+    };
+
+    try {
+      let response = await axiosInstance.patch(
+        `/admin/wallet/user/${id}/deduct`,
+        payload,
+        {
+          headers,
+        }
+      );
+      return response.data;
+    } catch (err: any) {
+      if (!err.response) {
+        throw err;
+      }
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const walletSlice = createSlice({
   name: "wallet",
   initialState,
@@ -262,5 +306,6 @@ export {
   updateWithdrawalThreshold,
   withdrawalRequestDecison,
   withdrawaladdition,
+  withdrawaldeduction
 };
 export default walletSlice.reducer;
