@@ -14,7 +14,8 @@ type UpdateBalanceInterface = {
   toggle: () => void;
   updateType: string;
   userDetails?: any;
-  reload?: any
+  reload?: any;
+  balance?: any;
 };
 
 const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
@@ -22,7 +23,8 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
   toggle,
   updateType,
   userDetails,
-  reload
+  reload,
+  balance,
 }) => {
   if (!isOpen) return null;
 
@@ -75,7 +77,6 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
             if (reload) {
               reload();
             }
-
           } else {
             setLoading(false);
             dispatch(
@@ -140,9 +141,12 @@ const UpdateBalance: React.FC<UpdateBalanceInterface> = ({
             <span className={"font-bold text-[14px]"}>
               {" "}
               ₦{" "}
-              {formatNumberWithCommas(
-                userDetails?.history[0]?.wallet?.balance || 0
-              )}
+              {/* {formatNumberWithCommas(
+                userDetails?.total_amount ||
+                  userDetails?.history[0]?.wallet?.balance ||
+                  0
+              )} */}
+              {formatNumberWithCommas(balance || 0)}
             </span>
           </p>
 

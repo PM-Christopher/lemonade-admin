@@ -27,6 +27,7 @@ import {
 import DeactivateModal from "@/modals/users/DeactivateModal";
 import SuspendModal from "@/modals/users/SuspendModal";
 import suspendModal from "@/modals/users/SuspendModal";
+import Image from "next/image";
 
 function UserDetailsPage({}) {
   const currentPage: number = 1;
@@ -141,9 +142,21 @@ function UserDetailsPage({}) {
           }
         >
           <div className={"flex justify-between"}>
-            <div
-              className={"w-[64px] h-[64px] bg-light-black rounded-full"}
-            ></div>
+            {user?.profile_image ? (
+              <Image
+                src={user?.profile_image}
+                alt="image"
+                width={89}
+                height={83}
+                className={"w-[64px] h-[64px] bg-light-black rounded-full"}
+              />
+            ) : (
+              // null
+              <div
+                className={"w-[64px] h-[64px] bg-light-black rounded-full"}
+              ></div>
+            )}
+
             <div className={"flex gap-[4px]"}>
               <div
                 className={

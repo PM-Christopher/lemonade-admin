@@ -1,11 +1,33 @@
 import React, { useRef, useEffect, MouseEvent } from "react";
 import { CalendarIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { formatNumberWithCommas } from "@/lib/formatNumber";
+import UpdateBalance from "@/modals/wallet-management/UpdateBalance";
+import { useParams } from "next/navigation";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { getAccountInfo } from "@/features/user/user.slice";
 
 const WalletView = ({ userDetail }: any) => {
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const params = useParams();
 
+  const id = params.id
+    ? Array.isArray(params.id)
+      ? parseInt(params.id[0])
+      : parseInt(params.id)
+    : undefined;
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { authToken } = useSelector((state: RootState) => state.auth);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isUpdateOpen, setIsUpdateOpen] = React.useState<boolean>(false);
+
+  const [updateType, setUpdateType] = React.useState<string>("add");
+
+  const reloadFunc = () => {
+    if (id && authToken) {
+      dispatch(getAccountInfo({ token: authToken, id, infoType: "wallet" }));
+    }
+  };
   const handleToggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
   };
@@ -29,7 +51,9 @@ const WalletView = ({ userDetail }: any) => {
     };
   }, []);
 
-  console.log("user", typeof userDetail.affiliate_earning);
+  const toggleUpdateBalance = () => {
+    setIsUpdateOpen(!isUpdateOpen);
+  };
 
   return (
     <div className="flex flex-col">
@@ -48,10 +72,22 @@ const WalletView = ({ userDetail }: any) => {
           {dropdownOpen && (
             <div className="absolute left-0 top-full mt-1 w-[207px] bg-white rounded-[12px] shadow z-50">
               <ul>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    setUpdateType("add");
+                    toggleUpdateBalance();
+                  }}
+                >
                   <p className={"font-normal text-[16px]"}>Add to balance</p>
                 </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    setUpdateType("deduct");
+                    toggleUpdateBalance();
+                  }}
+                >
                   <p className={"font-normal text-[16px]"}>
                     Deduct from balance
                   </p>
@@ -111,6 +147,15 @@ const WalletView = ({ userDetail }: any) => {
           </div>
         </div>
       </div>
+
+      <UpdateBalance
+        isOpen={isUpdateOpen}
+        toggle={toggleUpdateBalance}
+        updateType={updateType}
+        userDetails={userDetail}
+        reload={reloadFunc}
+        balance={userDetail?.total_amount}
+      />
     </div>
   );
 };
