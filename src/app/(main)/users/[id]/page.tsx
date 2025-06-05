@@ -15,7 +15,7 @@ import BusinessView from "@/views/users/BusinessView";
 import EventView from "@/views/users/EventView";
 import WalletView from "@/views/users/WalletView";
 import BalanceModal from "@/modals/users/BalanceModal";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getEventDetail } from "@/features/transaction/transaction.slice";
@@ -27,8 +27,10 @@ import {
 import DeactivateModal from "@/modals/users/DeactivateModal";
 import SuspendModal from "@/modals/users/SuspendModal";
 import suspendModal from "@/modals/users/SuspendModal";
+import Image from "next/image";
 
 function UserDetailsPage({}) {
+  const router = useRouter();
   const currentPage: number = 1;
   const totalPages: number = 10;
   const params = useParams();
@@ -73,6 +75,13 @@ function UserDetailsPage({}) {
       dispatch(getUserDetail({ token: authToken, id }));
     }
   }, []);
+
+  const reloadFunc = () => {
+    // if (authToken && id) {
+    //   dispatch(getUserDetail({ token: authToken, id }));
+    // }
+    router.refresh();
+  };
 
   const [menuOption, setMenuOption] = useState("activities-log");
   const [tribeOpen, setTribeOpen] = useState(false);
@@ -124,6 +133,7 @@ function UserDetailsPage({}) {
   const reactivateUser = () => {
     if (authToken && id) {
       dispatch(userAction({ token: authToken, id, actionType: "reactivate" }));
+      reloadFunc();
     }
   };
 
@@ -141,9 +151,21 @@ function UserDetailsPage({}) {
           }
         >
           <div className={"flex justify-between"}>
-            <div
-              className={"w-[64px] h-[64px] bg-light-black rounded-full"}
-            ></div>
+            {user?.profile_image ? (
+              <Image
+                src={user?.profile_image}
+                alt="image"
+                width={89}
+                height={83}
+                className={"w-[64px] h-[64px] bg-light-black rounded-full"}
+              />
+            ) : (
+              // null
+              <div
+                className={"w-[64px] h-[64px] bg-light-black rounded-full"}
+              ></div>
+            )}
+
             <div className={"flex gap-[4px]"}>
               <div
                 className={
@@ -272,7 +294,7 @@ function UserDetailsPage({}) {
                 Lemonade Tag:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>{user?.lemon_id}</p>
+            <p className={"text-[14px] font-medium"}>{user?.unique_id}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -296,7 +318,10 @@ function UserDetailsPage({}) {
                 Social Links:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>Links here</p>
+
+            {user?.social_links?.map((item: any) => (
+              <a className={"text-[14px] font-medium"} href={item?.value}>{item?.name}</a>
+            ))}
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
@@ -377,11 +402,13 @@ function UserDetailsPage({}) {
         isOpen={deactivateModalOpen}
         toggle={toggleDeactivateModalOpen}
         id={id}
+        reload={reloadFunc}
       />
       <SuspendModal
         isOpen={suspendModalOpen}
         toggle={toggleSuspendModalOpen}
         id={id}
+        reload={reloadFunc}
       />
     </MainLayout>
   );

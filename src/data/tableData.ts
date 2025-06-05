@@ -96,7 +96,7 @@ export const planData = [
     }
 ]
 
-export const walletHeaders = ["TXN ID", "FULL NAME", "AMOUNT", "DATE PAID", "STATUS"]
+export const walletHeaders = ["TXN ID", "FULL NAME", "AMOUNT","DATE REQUESTED", "DATE PAID", "STATUS"]
 export const walletData = [
     {
         "TXN ID": "WA12343",

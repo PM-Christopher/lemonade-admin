@@ -22,22 +22,25 @@ function ActivitiesViews({ userDetail }: any) {
 
         <div className="pt-[16px] pb-[24px]">
           <div className={"flex flex-col"}>
-            <div className="flex justify-between px-[24px] py-[16px]">
-              <p className={"font-medium text-[14px] text-light-black"}>
-                Joined Lemonade Network
-              </p>
-              <p className={"text-text-grey font-normal text-[14px]"}>
-                Mon, 23 Mar, 2024 05:00PM
-              </p>
-            </div>
-            <div className="flex justify-between px-[24px] py-[16px]">
+            {userDetail?.logs?.map((item: any) => (
+              <div className="flex justify-between px-[24px] py-[16px]" key={item?.id}>
+                <p className={"font-medium text-[14px] text-light-black"}>
+               {item?.message}
+                </p>
+                <p className={"text-text-grey font-normal text-[14px]"}>
+                {item?.created_at}
+                </p>
+              </div>
+            ))}
+
+            {/* <div className="flex justify-between px-[24px] py-[16px]">
               <p className={"font-medium text-[14px] text-light-black"}>
                 Created a 'Nigeria start-ups' Tribe
               </p>
               <p className={"text-text-grey font-normal text-[14px]"}>
                 Mon, 23 Mar, 2024 05:00PM
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

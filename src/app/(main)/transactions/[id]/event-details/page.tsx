@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { getEventDetail } from "@/features/transaction/transaction.slice";
 import { capitalizeWords } from "@/utils/helper";
 import PaginationComp from "@/components/global/Pagination";
+import dayjs from "dayjs";
 
 function EventDetailsPage({}) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -164,7 +165,7 @@ function EventDetailsPage({}) {
               </p>
             </div>
             <p className={"text-[14px] font-medium"}>
-              {event?.info?.created_at}
+              {dayjs(event?.info?.created_at).format("DD MMM, YYYY hh:mmA")}
             </p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
