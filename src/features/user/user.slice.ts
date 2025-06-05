@@ -33,7 +33,7 @@ const getUserData = createAsyncThunk("user/getUserData", async ({ token, trxType
                 response = await axiosInstance.get(`/admin/users`, { headers });
                 return response.data;
             case "affiliates":
-                response = await axiosInstance.get(`/admin/affiliates`, { headers });
+                response = await axiosInstance.get(`/admin/users/affiliates/log`, { headers });
                 return response.data;
             default:
                 response = await axiosInstance.get(`/admin/users`, { headers });
@@ -64,6 +64,28 @@ const getUserDetail = createAsyncThunk("user/getUserDetail", async ({ token, id 
         return rejectWithValue(err.response.data);
     }
 });
+
+
+
+
+const getAffiliateDetail = createAsyncThunk("user/getAffiliateDetail", async ({ token, id }: { token: string, id: number }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        const response = await axiosInstance.get(`/admin/users/affiliates/${id}/detail`, { headers });
+        return response.data;
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
+
 
 const getAccountInfo = createAsyncThunk("user/getAccountInfo", async ({ token, id, infoType }: { token: string, id: number, infoType: string }, { rejectWithValue }) => {
     const headers = {
@@ -192,5 +214,5 @@ const userSlice = createSlice({
     }
 });
 
-export { getUserData, getUserDetail, getAccountInfo, userAction }
+export { getUserData, getUserDetail, getAccountInfo, userAction , getAffiliateDetail}
 export default userSlice.reducer;
