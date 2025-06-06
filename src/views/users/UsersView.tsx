@@ -36,6 +36,7 @@ function UsersViews({ userData }: any) {
       const filtered = userData.users.filter((user: any) => {
         const matchesQuery =
           !q ||
+          user?.unique_id?.toLowerCase().includes(q) ||
           user?.location?.toLowerCase().includes(q) ||
           user?.fullname?.toLowerCase().includes(q) ||
           user?.email?.toLowerCase().includes(q);
@@ -86,7 +87,7 @@ function UsersViews({ userData }: any) {
                   onClick={() => router.push(`/users/${row.id}`)}
                 >
                   <td className={"p-4 font-medium text-sm font-sans"}>
-                    {row.lemon_id}
+                    {row.unique_id}
                   </td>
                   <td className={"p-4 font-medium text-sm font-sans"}>
                     {row.fullname}

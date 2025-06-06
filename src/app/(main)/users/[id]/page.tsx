@@ -294,7 +294,7 @@ function UserDetailsPage({}) {
                 Lemonade Tag:
               </p>
             </div>
-            <p className={"text-[14px] font-medium"}>{user?.lemon_id}</p>
+            <p className={"text-[14px] font-medium"}>{user?.unique_id}</p>
           </div>
           <div className={"flex gap-[24px] items-center-center"}>
             <div className={"w-[115px]"}>
