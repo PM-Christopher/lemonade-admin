@@ -3,6 +3,7 @@ import { XIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { userAction } from "@/features/user/user.slice";
+import { FaSpinner } from "react-icons/fa6";
 
 interface SuspendModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ function SuspendModal({ isOpen, toggle, id, reload }: SuspendModalProps) {
   const { userAction: actionStatus } = useSelector(
     (state: RootState) => state.user
   ) as { userAction: any };
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(e.target.value);
@@ -26,17 +28,20 @@ function SuspendModal({ isOpen, toggle, id, reload }: SuspendModalProps) {
 
   const SubmitAction = () => {
     if (authToken && id) {
+      setLoading(true);
       dispatch(
         userAction({ token: authToken, id, actionType: "suspend" })
       ).then((res: any) => {
         console.log("res", res);
         // if (res.paylod.status === true) {
-          toggle();
-          reload();
+        toggle();
+        reload();
+        setLoading(false);
         // }
       });
     }
   };
+
   return (
     <div
       className={`fixed inset-0 bg-gray-800 bg-opacity-50 items-center justify-center z-50 ${
@@ -85,7 +90,13 @@ function SuspendModal({ isOpen, toggle, id, reload }: SuspendModalProps) {
               }
               onClick={SubmitAction}
             >
-              <p className={"text-[16px] font-medium text-white"}>Suspend</p>
+              {loading ? (
+                <div className="flex justify-center items-center">
+                  <FaSpinner size={20} className="animate-spin text-white" />
+                </div>
+              ) : (
+                <p className={"text-[16px] font-medium text-white"}>Suspend</p>
+              )}
             </button>
           </div>
         </div>
