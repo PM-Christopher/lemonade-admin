@@ -28,6 +28,7 @@ import DeactivateModal from "@/modals/users/DeactivateModal";
 import SuspendModal from "@/modals/users/SuspendModal";
 import suspendModal from "@/modals/users/SuspendModal";
 import Image from "next/image";
+import { FaSpinner } from "react-icons/fa6";
 
 function UserDetailsPage({}) {
   const router = useRouter();
@@ -46,6 +47,8 @@ function UserDetailsPage({}) {
   ) as { user: any; loading: boolean; userDetail: any };
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [isReactivatingUser, setReactivatingUser] = useState<boolean>(false);
 
   const handleToggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
@@ -80,7 +83,8 @@ function UserDetailsPage({}) {
     // if (authToken && id) {
     //   dispatch(getUserDetail({ token: authToken, id }));
     // }
-    router.refresh();
+    // router.refresh();
+    window.location.reload();
   };
 
   const [menuOption, setMenuOption] = useState("activities-log");
@@ -132,8 +136,13 @@ function UserDetailsPage({}) {
 
   const reactivateUser = () => {
     if (authToken && id) {
-      dispatch(userAction({ token: authToken, id, actionType: "reactivate" }));
-      reloadFunc();
+      setReactivatingUser(true);
+      dispatch(
+        userAction({ token: authToken, id, actionType: "reactivate" })
+      ).then(() => {
+        reloadFunc();
+        setReactivatingUser(false);
+      });
     }
   };
 
@@ -182,15 +191,21 @@ function UserDetailsPage({}) {
                   }
                   onClick={reactivateUser}
                 >
-                  <p className={"text-[16px] font-medium text-white"}>
-                    Reactivate user
-                  </p>
+                  {isReactivatingUser ? (
+                    <div className="flex justify-center items-center">
+                      <FaSpinner size={20} className="text-white animate-spin" />
+                    </div>
+                  ) : (
+                    <p className={"text-[16px] font-medium text-white"}>
+                      Reactivate user
+                    </p>
+                  )}
                 </button>
               ) : (
                 <div className="relative inline-block">
                   <div
                     className={
-                      "flex border-[1px] border-light-grey-50 bg-none w-[149px] h-[44px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
+                      "flex border-[1px] border-light-grey-50 bg-none w-[149px] h-[44px] px-[16px] py-[10px] rounded-[12px] justify-between items-center cursor-pointer"
                     }
                     onClick={handleToggleDropdown}
                   >
@@ -319,8 +334,17 @@ function UserDetailsPage({}) {
               </p>
             </div>
 
-            {user?.social_links?.map((item: any) => (
-              <a className={"text-[14px] font-medium"} href={item?.value}>{item?.name}</a>
+            {user?.social_links?.map((item: any, index: number) => (
+              <a
+                key={index}
+                className={
+                  "text-[14px] font-medium capitalize underline text-green-400"
+                }
+                href={item?.value}
+                target="_blank"
+              >
+                {item?.name}
+              </a>
             ))}
           </div>
           <div className={"flex gap-[24px] items-center-center"}>

@@ -48,9 +48,9 @@ function UsersPage({}) {
   const renderViews = () => {
     switch (menuOption) {
       case "users":
-        return <UsersViews userData={userData} />;
+        return <UsersViews userData={userData} menuOption={menuOption} />;
       case "affiliates":
-        return <AffiliateView userData={userData} />;
+        return <AffiliateView userData={userData} menuOption={menuOption} />;
     }
   };
 
@@ -62,11 +62,16 @@ function UsersPage({}) {
 
   const exportUser = () => {
     setLoading(true);
-    dispatch(getCSV({ token: authToken || "", table: "users" }))
+    dispatch(
+      getCSV({
+        token: authToken || "",
+        table: `${menuOption === "users" ? "users" : "affiliates"}`,
+      })
+    )
       .then((res) => {
         setLoading(false);
         if (res.meta.requestStatus) {
-          downloadCSV(res.payload, "users.csv");
+          downloadCSV(res.payload, `${menuOption === "users" ? "users.csv" : "affiliates.csv"}`);
 
           dispatch(
             updateToastifyReducer({
@@ -136,18 +141,20 @@ function UsersPage({}) {
                 />
               </div>
             </div>
-            <Select
-              suffixIcon={<ChevronDown className="text-text-grey w-[20px]" />}
-              defaultValue="Status"
-              className="w-[193px] h-[40px] text-[12px] font-semiBold text-text-grey rounded-[12px] focus:!border-light-green-50"
-              options={statusOptions.map((status) => ({
-                label: status,
-                value: status.toLowerCase(),
-              }))}
-              onChange={(value) => {
-                setStatus(value);
-              }}
-            />
+            {menuOption === "users" && (
+              <Select
+                suffixIcon={<ChevronDown className="text-text-grey w-[20px]" />}
+                defaultValue="Status"
+                className="w-[193px] h-[40px] text-[12px] font-semiBold text-text-grey rounded-[12px] focus:!border-light-green-50"
+                options={statusOptions.map((status) => ({
+                  label: status,
+                  value: status.toLowerCase(),
+                }))}
+                onChange={(value) => {
+                  setStatus(value);
+                }}
+              />
+            )}
             <div
               className={
                 "flex border-[1px] border-grey-20 bg-none w-[193px] h-[40px] px-[16px] py-[10px] rounded-[12px] justify-between items-center"
