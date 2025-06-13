@@ -5,8 +5,8 @@ import {CalendarIcon, CopyIcon, DotIcon, MapPinIcon} from "lucide-react";
 const AffiliateDetailsPage = ({}) => {
     return (
         <MainLayout>
-            <section className={"p-[20px] flex justify-between"}>
-                <div className={"w-[800px] h-fit bg-white flex flex-col rounded-[12px] p-[24px] gap-[12px]"}>
+            <section className={"p-[20px] flex justify-between gap-[2px]"}>
+                <div className={"w-[400px] h-fit bg-white flex flex-col rounded-[12px] p-[24px] gap-[12px]"}>
                     <div className={"flex gap-[24px] items-center-center"}>
                         <div className={"w-[115px]"}>
                             <p className={"text-text-grey text-[12px] font-medium"}>Affiliate Name:</p>

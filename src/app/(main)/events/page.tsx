@@ -18,6 +18,7 @@ import { getCSV } from "@/features/exports/export.slice";
 import { downloadCSV } from "@/utils/helper";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
 import { Button } from "@/components/ui/button";
+import EditCommissionModal from "@/modals/events/EditCommissionModal";
 
 const EventsPage = () => {
   const [menuOption, setMenuOption] = useState("events");

@@ -7,7 +7,7 @@ import PaginationComp from "@/components/global/Pagination";
 import { useRouter } from "next/navigation";
 import useSearchParams from "@/hooks/useSearchParams";
 
-function UsersViews({ userData }: any) {
+function UsersViews({ userData, menuOption }: any) {
   const router = useRouter();
   const { searchParams } = useSearchParams();
   const query = searchParams?.get("q");
@@ -25,6 +25,7 @@ function UsersViews({ userData }: any) {
   }, [userData]);
   // Search + reset pagination
   useEffect(() => {
+    if (menuOption !== "users") return;
     if (!userData) return;
 
     if ((!query && !status) || query?.trim() === "") {
@@ -36,6 +37,7 @@ function UsersViews({ userData }: any) {
       const filtered = userData.users.filter((user: any) => {
         const matchesQuery =
           !q ||
+          user?.unique_id?.toLowerCase().includes(q) ||
           user?.location?.toLowerCase().includes(q) ||
           user?.fullname?.toLowerCase().includes(q) ||
           user?.email?.toLowerCase().includes(q);
@@ -49,7 +51,7 @@ function UsersViews({ userData }: any) {
     }
 
     setCurrentPage(1); // Reset to first page on search
-  }, [query, status, userData]);
+  }, [query, status, userData, menuOption]);
 
   // Calculate pagination from filtered data
   const totalPages = Math.ceil(data?.length / perPage);

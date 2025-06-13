@@ -98,6 +98,23 @@ const eventAction = createAsyncThunk("event/eventAction", async ({ token, id, ac
     }
 });
 
+const updateCommissionCharge = createAsyncThunk("event/updateCommissionCharge", async ({ token, data }: { token: any, data: any }, { rejectWithValue }) => {
+    const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
+    try {
+        const response = await axiosInstance.patch(`/admin/events/update-commission-charge`, data, { headers });
+        return response.data;
+    } catch (err: any) {
+        if (!err.response) {
+            throw err;
+        }
+        return rejectWithValue(err.response.data);
+    }
+});
 
 const eventSlice = createSlice({
     name: "event",
@@ -141,8 +158,18 @@ const eventSlice = createSlice({
         builder.addCase(eventAction.rejected, (state) => {
             state.loading = false;
         });
+
+        builder.addCase(updateCommissionCharge.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateCommissionCharge.fulfilled, (state, { payload }) => {
+            state.loading = false;
+        });
+        builder.addCase(updateCommissionCharge.rejected, (state) => {
+            state.loading = false;
+        });
     }
 });
 
-export { getEventData, getEventDetail, eventAction }
+export { getEventData, getEventDetail, eventAction, updateCommissionCharge }
 export default eventSlice.reducer;

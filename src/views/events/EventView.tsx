@@ -5,13 +5,17 @@ import {eventMainData, eventMainHeaders, planHeaders, walletHeaders} from "@/dat
 import {capitalizeWords} from "@/utils/helper";
 import PaginationComp from "@/components/global/Pagination";
 import {useRouter} from "next/navigation";
+import EditCommissionModal from "@/modals/events/EditCommissionModal";
 
 const EventView = ({pageData}: any) => {
-    console.log({pageData})
     const router = useRouter()
     // State for current page and items per page
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
+    const [editCommissionModal, setEditCommissionModal] = useState(false);
+    const toggleEditModal = () => {
+        setEditCommissionModal(!editCommissionModal);
+    }
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -29,7 +33,7 @@ const EventView = ({pageData}: any) => {
             <>
                 <div className={"flex justify-between gap-[24px] pt-[8px] px-[12px] pb-[16px]"}>
                     <DataCard styles={"w-full"} title={"Ticket Commission"} count={pageData?.tickets_commission} isPrice={true}/>
-                    <DataCard styles={"w-full"} title={"Commission Percentage"} isPercentage={true} count={pageData?.commission_charge} isEditable={true}/>
+                    <DataCard styles={"w-full"} title={"Commission Percentage"} isPercentage={true} count={pageData?.commission_charge * 100} isEditable={true} handleChange={toggleEditModal}/>
                     <DataCard styles={"w-full"} title={"Total Events"} count={pageData?.total_events} />
                 </div>
                 <div className="bg-white shadow-md rounded-lg">
@@ -51,7 +55,7 @@ const EventView = ({pageData}: any) => {
                             paginatedData && paginatedData.length > 0 ? paginatedData.map((row:any, index: any) => (
                                 <tr key={index} className="border-b border-grey-20 h-[72px] cursor-pointer" onClick={() => router.push(`/events/${row.id}`)}>
                                     <td className={'p-4 font-medium text-sm font-sans'}>
-                                        {row?.id}
+                                        {row?.unique_id}
                                     </td>
                                     <td className={'p-4 font-medium text-sm font-sans'}>
                                         {row?.event_name}
@@ -88,6 +92,7 @@ const EventView = ({pageData}: any) => {
                         perPage={perPage}
                     />
                 </div>
+                <EditCommissionModal isOpen={editCommissionModal} toggle={toggleEditModal} commissionCharge={pageData?.commission_charge} />
             </>
         </>
     );

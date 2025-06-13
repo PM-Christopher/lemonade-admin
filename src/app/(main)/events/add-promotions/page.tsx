@@ -8,16 +8,21 @@ import {listPromotions} from "@/data/tableData";
 import CreatePromotionModal from "@/modals/events/CreatePromotionModal";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
-import {getPromotionData} from "@/features/events/promotion.slice";
+import {clearPromotion, getPromotionData} from "@/features/events/promotion.slice";
 
 function AddPromotionPage() {
     const [promotionModal, setPromotionModal] = useState(false)
     const dispatch = useDispatch<AppDispatch>();
+    const [promotionId, setPromotionId] = useState(0);
 
     const { authToken } = useSelector((state: RootState) => state.auth)
     const { promotionData } = useSelector((state: RootState) => state.promotion) as {promotionData: any}
 
     const togglePromotionModal = () => {
+        if (promotionId !== 0) {
+            setPromotionId(0)
+            dispatch(clearPromotion())
+        }
         setPromotionModal(!promotionModal);
     }
 
@@ -27,8 +32,12 @@ function AddPromotionPage() {
         }
     }, [])
 
+    const storePromotionId = (promotionId: number) => {
+        setPromotionId(promotionId)
+    }
 
-    console.log("promotionData", promotionData)
+    console.log({promotionId})
+
 
     return (
         <MainLayout>
@@ -47,12 +56,12 @@ function AddPromotionPage() {
                 <div className={'grid grid-cols-3 px-[20px] gap-[24px]'}>
                     {
                         promotionData?.promotions.map((promotion: any, index: number) => (
-                            <PromotionsCard promotion={promotion} key={index} />
+                            <PromotionsCard promotion={promotion} key={index} promotionId={promotion?.id} setPromotionId={setPromotionId} toggle={togglePromotionModal} />
                         ))
                     }
                 </div>
             </section>
-            <CreatePromotionModal isOpen={promotionModal} toggle={togglePromotionModal} />
+            <CreatePromotionModal isOpen={promotionModal} toggle={togglePromotionModal} promotionId={promotionId} />
         </MainLayout>
     );
 }

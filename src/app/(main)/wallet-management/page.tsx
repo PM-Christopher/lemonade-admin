@@ -200,7 +200,7 @@ function WalletMgtPage({}) {
               />
               <DataCard
                 title={"Withdrawal Threshold"}
-                count={walletData?.withdrawal_threshold?.toLocaleString() || 0}
+                count={walletData?.withdrawal_threshold || 0}
                 isPrice={true}
                 isEditable={true}
                 handleChange={toggleEditThreshold}

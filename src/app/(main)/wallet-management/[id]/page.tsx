@@ -91,7 +91,7 @@ function WalletDetailsPage({}) {
     return capitalizeWords(String(value || "N/A"));
   };
 
-  console.log({ walletDetail });
+  console.log(walletDetail?.info);
 
   return (
     <MainLayout>
@@ -101,9 +101,9 @@ function WalletDetailsPage({}) {
             "w-[600px] h-fit bg-white p-[24px] flex flex-col gap-[20px] rounded-[12px]"
           }
         >
-          <div
+          {/* <div
             className={"w-[64px] h-[64px] rounded-full bg-light-black"}
-          ></div>
+          ></div> */}
 
           {walletDetail?.info ? (
             Object.entries(walletDetail?.info)
@@ -263,6 +263,7 @@ function WalletDetailsPage({}) {
         updateType={updateType}
         userDetails={walletDetail}
         reload={reloadFunc}
+        balance={walletDetail?.history[0]?.wallet?.balance}
       />
 
       <PayoutHistory

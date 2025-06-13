@@ -4,16 +4,38 @@ import { formatThousandSeparator } from "@/utils/helper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { deletePromotion } from "@/features/events/promotion.slice";
+import {updateToastifyReducer} from "@/redux/toastifySlice";
 
-function PromotionsCard({ promotion }: { promotion: any }) {
+function PromotionsCard({promotion, promotionId, setPromotionId, toggle,}: {
+  promotion: any,
+  promotionId: number;
+  setPromotionId: (promotionId: number) => void;
+  toggle: () => void;
+}) {
   const dispatch = useDispatch<AppDispatch>();
   const { authToken } = useSelector((state: RootState) => state.auth);
 
   const handleDeletePromotion = (id: number) => {
     if (authToken && id) {
-      dispatch(deletePromotion({ token: authToken, id }));
+      dispatch(deletePromotion({ token: authToken, id })).then((res: any) => {
+        if (res.payload.status) {
+          dispatch(
+              updateToastifyReducer({
+                show: true,
+                message: "Promotion deleted successfully",
+                type: "success",
+              })
+          );
+          window.location.reload();
+        }
+      });
     }
   };
+
+  const handleEditPromotion = (id: number) => {
+    setPromotionId(id);
+    toggle()
+  }
 
   return (
     <div
@@ -22,7 +44,7 @@ function PromotionsCard({ promotion }: { promotion: any }) {
       <div className={"flex justify-between"}>
         <p className={"font-semiBold text-[16px]"}>{promotion?.name}</p>
         <div className={"flex gap-[4px]"}>
-          <PencilIcon className={"cursor-pointer"} />
+          <PencilIcon className={"cursor-pointer"} onClick={() => handleEditPromotion(promotion?.id)} />
           <TrashIcon
             className={"text-red-1 cursor-pointer"}
             onClick={() => handleDeletePromotion(promotion?.id)}

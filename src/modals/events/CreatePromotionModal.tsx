@@ -1,20 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {PlusIcon, XIcon} from "lucide-react";
 import {useFormik} from "formik";
 import * as yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/redux/store";
-import {createPromotion} from "@/features/events/promotion.slice";
+import {clearPromotion, createPromotion, getPromotion, updatePromotion} from "@/features/events/promotion.slice";
+import {FormikButton} from "@/components/global/FormikButton";
+import {updateToastifyReducer} from "@/redux/toastifySlice";
 
 interface CreatePromotionModalProps {
     isOpen: boolean;
     toggle: () => void;
+    promotionId?: number;
 }
 
-const CreatePromotionModal:  React.FC<CreatePromotionModalProps> = ({isOpen, toggle}) => {
-    const [eventType, setEventType] = React.useState('one-time');
+const CreatePromotionModal:  React.FC<CreatePromotionModalProps> = ({isOpen, toggle, promotionId}) => {
+    const [eventType, setEventType] = React.useState('');
     const dispatch = useDispatch<AppDispatch>();
     const { authToken } = useSelector((state: RootState) => state.auth)
+    const { promotion } = useSelector((state: RootState) => state.promotion);
+    const [promotionTitle, setPromotionTitle] = useState('Create Promotion');
 
     const [breakdowns, setBreakdowns] = useState<string[]>(['']);
 
@@ -55,11 +60,60 @@ const CreatePromotionModal:  React.FC<CreatePromotionModalProps> = ({isOpen, tog
         onSubmit: async (values) => {
             if (authToken) {
                 const data = {...values, breakdown: breakdowns}
-                console.log({data})
-                dispatch(createPromotion({ token: authToken, data }))
+                if (promotionId !== 0) {
+                    dispatch(updatePromotion({data:data, token: authToken, id: promotionId })).then((res: any) => {
+                        if (res.payload.status) {
+                            dispatch(
+                                updateToastifyReducer({
+                                    show: true,
+                                    message: "Updated promotion successfully",
+                                    type: "success",
+                                })
+                            );
+                            dispatch(clearPromotion())
+                            toggle()
+                        }
+                    })
+                } else {
+                    dispatch(createPromotion({ token: authToken, data })).then((res: any) => {
+                        if (res.payload.status) {
+                            dispatch(
+                                updateToastifyReducer({
+                                    show: true,
+                                    message: "Added promotion successfully",
+                                    type: "success",
+                                })
+                            );
+                            toggle()
+                        }
+                    })
+                }
             }
         },
     })
+
+    useEffect(() => {
+        if (promotionId !== 0) {
+            dispatch(getPromotion({token: authToken, id: promotionId})).then((res) => {
+                if (res.payload.status) {
+                    const data = res.payload.data.promotion
+                    setEventType(data.price_option)
+                    setPromotionTitle("Edit Promotion")
+                    formik.setFieldValue('name', data.name)
+                    formik.setFieldValue('price', data.price)
+                    formik.setFieldValue('price_option', data.price_option)
+                    setBreakdowns(data.breakdown ?? [])
+                }
+            })
+        } else {
+            setPromotionTitle("Create Promotion")
+            dispatch(clearPromotion())
+            formik.setFieldValue('name', "")
+            formik.setFieldValue('price', "")
+            formik.setFieldValue('price_option', "")
+            setBreakdowns([''])
+        }
+    }, [promotionId]);
 
     return (
         <div
@@ -71,16 +125,11 @@ const CreatePromotionModal:  React.FC<CreatePromotionModalProps> = ({isOpen, tog
                             <div className={'flex gap-[8px] items-center'}>
                                 <XIcon onClick={toggle} className={'cursor-pointer'}/>
                                 <p className="font-sans font-semibold text-[18px] leading-[27px]">
-                                    Create promotion
+                                    {promotionTitle}
                                 </p>
                             </div>
                             <div className="cursor-pointer">
-                                <button
-                                    className={"border-[1px] border-step-color px-[14px] py-[11px] rounded-[12px] bg-gradient-green w-full"}
-                                    type={'submit'}
-                                >
-                                    <p className={"text-[16px] font-medium text-white"}>Create promotion</p>
-                                </button>
+                                <FormikButton loading={formik.isSubmitting} title={promotionTitle} error={formik.isValid} classes="border-[1px] px-[14px] py-[11px] rounded-[12px] w-full"/>
                             </div>
                         </div>
                     </div>
@@ -132,31 +181,34 @@ const CreatePromotionModal:  React.FC<CreatePromotionModalProps> = ({isOpen, tog
                         </div>
                         <div className="flex flex-col gap-[2px]">
                             <p className="text-text-grey font-normal text-[14px]">Breakdown</p>
-                            {breakdowns.map((breakdown, index) => (
-                                <div key={index} className="flex flex-col gap-[2px]">
-                                    <div className="relative">
-                                        <input
-                                            className="bg-light-grey p-[12px] pr-[40px] gap-[12px] rounded-[12px] h-[48px] text-[14px] w-full"
-                                            placeholder="Enter breakdown of promotion"
-                                            value={breakdown}
-                                            onChange={(e) => handleInputChange(index, e.target.value)}
-                                        />
-                                        {index > 0 && (
-                                            <button
-                                                onClick={() => handleRemoveField(index)}
-                                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
-                                                <XIcon size={20} />
-                                            </button>
-                                        )}
+                            {
+                                breakdowns.map((breakdown, index) => (
+                                    <div key={index} className="flex flex-col gap-[2px]">
+                                        <div className="relative">
+                                            <input
+                                                className="bg-light-grey p-[12px] pr-[40px] gap-[12px] rounded-[12px] h-[48px] text-[14px] w-full"
+                                                placeholder="Enter breakdown of promotion"
+                                                value={breakdown}
+                                                onChange={(e) => handleInputChange(index, e.target.value)}
+                                            />
+                                            {index > 0 && (
+                                                <button
+                                                    onClick={() => handleRemoveField(index)}
+                                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
+                                                    <XIcon size={20} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            }
                         </div>
                     </div>
                     <div className={"flex justify-between gap-[16px] px-[16px] pb-[10px]"}>
                         <button
                             className={"border-[1px] px-[48px] py-[11px] rounded-[12px] bg-light-green-10 w-full flex items-center justify-center"}
                             onClick={handleAddField}
+                            type={'button'}
                         >
                             <PlusIcon className={'text-light-green'} />
                             <p className={"text-[16px] font-medium text-light-green"}>Add breakdown</p>
