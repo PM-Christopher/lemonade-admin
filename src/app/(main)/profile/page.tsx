@@ -1,7 +1,21 @@
-import React from 'react';
+"use client"
+import React, {useEffect} from 'react';
 import MainLayout from "@/components/layouts/MainLayout";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {getUserProfile} from "@/features/profile/profile.slice";
 
 function ProfilePage({}) {
+
+    const dispatch = useDispatch<AppDispatch>();
+    const { authToken, user } = useSelector((state: RootState) => state.auth);
+    const { profile } = useSelector((state: RootState) => state.profile);
+
+    useEffect(() => {
+        dispatch(getUserProfile({token: authToken}));
+    }, []);
+
+
     return (
         <MainLayout>
             <section className={"p-[20px] flex justify-between"}>
@@ -12,26 +26,26 @@ function ProfilePage({}) {
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Full Name:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>Adebayo Akintoye</p>
+                            <p className={"text-[14px] font-medium"}>{profile?.name}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>User ID:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>LN112332</p>
+                            <p className={"text-[14px] font-medium"}>{profile?.unique_id}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Status:</p>
                             </div>
-                            <p className={"text-[14px] font-medium  text-light-green-70"}>Active</p>
+                            <p className={"text-[14px] font-medium  text-light-green-70"}>{profile?.status === 1 ? "Active" : "Suspended"}</p>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Role:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>Customer support</p>
+                                <p className={"text-[14px] font-medium"}>{profile?.role.toUpperCase()}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
@@ -39,14 +53,14 @@ function ProfilePage({}) {
                                 <p className={"text-text-grey text-[12px] font-medium"}>Email Address:</p>
                             </div>
                             <div className={"flex gap-[4px]"}>
-                                <p className={"text-[14px] font-medium"}>adebayoadetoye@gmail.com</p>
+                                <p className={"text-[14px] font-medium"}>{profile?.email}</p>
                             </div>
                         </div>
                         <div className={"flex gap-[24px] items-center-center"}>
                             <div className={"w-[115px]"}>
                                 <p className={"text-text-grey text-[12px] font-medium"}>Date Address:</p>
                             </div>
-                            <p className={"text-[14px] font-medium"}>23 Apr, 2024 09:45 PM</p>
+                            <p className={"text-[14px] font-medium"}>{profile?.created_at}</p>
                         </div>
                         <button
                             className={'px-[48px] py-[11px] border-[1px] rounded-[12px] border-light-grey-50 w-fit font-sans font-medium text-[14px]'}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import DataCard from "@/components/global/DataCard";
 import GlobalTable from "@/components/global/GlobalTable";
 import {eventMainData, eventMainHeaders, planHeaders, walletHeaders} from "@/data/tableData";
@@ -6,9 +6,12 @@ import {capitalizeWords} from "@/utils/helper";
 import PaginationComp from "@/components/global/Pagination";
 import {useRouter} from "next/navigation";
 import EditCommissionModal from "@/modals/events/EditCommissionModal";
+import useSearchParams from "@/hooks/useSearchParams";
 
 const EventView = ({pageData}: any) => {
     const router = useRouter()
+    const { searchParams } = useSearchParams();
+    const query = searchParams?.get("search");
     // State for current page and items per page
     const [currentPage, setCurrentPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
@@ -21,12 +24,34 @@ const EventView = ({pageData}: any) => {
         setCurrentPage(page);
     };
 
+    const [data, setData] = useState<any>(pageData?.events || []);
+
+    useEffect(() => {
+        if (query?.trim() === "") {
+            setData(pageData?.events);
+        } else {
+            const q = query?.toLowerCase()?.trim();
+            const filtered = pageData?.events.filter((event: any) => {
+                console.log({event})
+                return !q ||
+                    event?.event_name?.toLowerCase().includes(q) ||
+                    event?.category?.toLowerCase().includes(q)||
+                    event?.unique_id?.toLowerCase().includes(q)||
+                    event?.event_type?.toLowerCase().includes(q);
+            });
+
+            setData(filtered);
+        }
+
+        setCurrentPage(1); // Reset to first page on search
+    }, [query]);
+
     // Calculate total pages based on the data length and perPage value
-    const totalPages = Math.ceil(pageData?.events?.length / perPage);
+    const totalPages = Math.ceil(data?.length / perPage);
 
     // Determine the start and end indices for slicing the data array
     const startIndex = (currentPage - 1) * perPage;
-    const paginatedData = pageData?.events?.slice(startIndex, startIndex + perPage)
+    const paginatedData = data?.slice(startIndex, startIndex + perPage)
 
     return (
         <>

@@ -15,6 +15,7 @@ import reportReducer from "@/features/reporting/reporting.slice"
 import announcementReducer from "@/features/announcements/announcements.slice"
 import teamReducer from "@/features/team/team.slice"
 import promotionReducer from "@/features/events/promotion.slice"
+import profileReducer from "@/features/profile/profile.slice"
 
 const persistConfig = {
     key: "root",
@@ -35,6 +36,7 @@ const reducers = combineReducers({
     announcement: announcementReducer,
     team: teamReducer,
     promotion: promotionReducer,
+    profile: profileReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);

@@ -1,24 +1,28 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import MainLayout from "@/components/layouts/MainLayout";
-import { PlusIcon, SearchIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import GlobalTable from "@/components/global/GlobalTable";
-import { announcementHeaders, teamHeaders } from "@/data/tableData";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
-import { getAnnouncementData } from "@/features/announcements/announcements.slice";
-import { capitalizeWords } from "@/utils/helper";
+import {PlusIcon, SearchIcon} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {teamHeaders} from "@/data/tableData";
+import {useRouter} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
+import {capitalizeWords} from "@/utils/helper";
 import PaginationComp from "@/components/global/Pagination";
-import { getTeamData } from "@/features/team/team.slice";
+import {getTeamData} from "@/features/team/team.slice";
 import AddMember from "@/modals/team/AddMemberModal";
+import useDebounce from "@/hooks/useDebounce";
+import useSearchParams from "@/hooks/useSearchParams";
 
 function TeamMembersPage({}) {
   const router = useRouter();
   // State for current page and items per page
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const { searchParams } = useSearchParams();
+  const query = searchParams?.get("search");
+
+  const [searchValue, setSearchValue] = useState("");
 
   const [isOpen, setOpen] = useState(false);
 
@@ -37,23 +41,47 @@ function TeamMembersPage({}) {
     teamData: any;
   };
 
-  // Calculate total pages based on the data length and perPage value
-  const totalPages = Math.ceil(teamData?.admins?.length / perPage);
-
-  // Determine the start and end indices for slicing the data array
-  const startIndex = (currentPage - 1) * perPage;
-  const paginatedData = teamData?.admins?.slice(
-    startIndex,
-    startIndex + perPage
-  );
-
+  const [data, setData] = useState<any>(teamData?.admins || []);
   useEffect(() => {
     if (authToken) {
       dispatch(getTeamData({ token: authToken }));
     }
   }, []);
 
-  console.log({ teamData });
+  const { debouncedValue } = useDebounce(searchValue, 500);
+  const { setSearchParams } = useSearchParams();
+  useEffect(() => {
+    setSearchParams({ search: debouncedValue });
+  }, [debouncedValue]);
+
+  useEffect(() => {
+    if (query?.trim() === "") {
+      setData(teamData?.admins);
+    } else {
+      const q = query?.toLowerCase()?.trim();
+      const filtered = teamData?.admins.filter((user: any) => {
+        console.log({user})
+        return !q ||
+            user?.name?.toLowerCase().includes(q) ||
+            user?.email?.toLowerCase().includes(q);
+      });
+
+      setData(filtered);
+    }
+
+    setCurrentPage(1); // Reset to first page on search
+  }, [query]);
+
+  // Calculate total pages based on the data length and perPage value
+  const totalPages = Math.ceil(data?.length / perPage);
+
+  // Determine the start and end indices for slicing the data array
+  const startIndex = (currentPage - 1) * perPage;
+  const paginatedData = data?.slice(
+      startIndex,
+      startIndex + perPage
+  );
+
 
   return (
     <MainLayout>
@@ -73,6 +101,7 @@ function TeamMembersPage({}) {
                   type="text"
                   className="rounded-xl text-[14px] bg-light-grey focus:outline-none focus:ring-0 focus:border-transparent w-full py-4"
                   placeholder="Search member, ID..."
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
             </div>
@@ -120,7 +149,7 @@ function TeamMembersPage({}) {
                         onClick={() => router.push(`/team/${row.id}`)}
                       >
                         <td className={"p-4 font-medium text-sm font-sans"}>
-                          {row.id}
+                          {row.unique_id}
                         </td>
                         <td className={"p-4 font-medium text-sm font-sans"}>
                           {row.name}

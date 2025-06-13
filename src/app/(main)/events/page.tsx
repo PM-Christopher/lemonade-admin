@@ -19,10 +19,15 @@ import { downloadCSV } from "@/utils/helper";
 import { updateToastifyReducer } from "@/redux/toastifySlice";
 import { Button } from "@/components/ui/button";
 import EditCommissionModal from "@/modals/events/EditCommissionModal";
+import useDebounce from "@/hooks/useDebounce";
+import useSearchParams from "@/hooks/useSearchParams";
 
 const EventsPage = () => {
   const [menuOption, setMenuOption] = useState("events");
   const dispatch = useDispatch<AppDispatch>();
+  const { searchParams } = useSearchParams();
+  const query = searchParams?.get("search");
+  const [searchValue, setSearchValue] = useState("");
 
   const { authToken } = useSelector((state: RootState) => state.auth);
   const { eventData } = useSelector((state: RootState) => state.event) as {
@@ -45,6 +50,12 @@ const EventsPage = () => {
         return <></>;
     }
   };
+
+  const { debouncedValue } = useDebounce(searchValue, 500);
+  const { setSearchParams } = useSearchParams();
+  useEffect(() => {
+    setSearchParams({ search: debouncedValue });
+  }, [debouncedValue]);
 
   useEffect(() => {
     if (authToken && menuOption) {
@@ -109,6 +120,7 @@ const EventsPage = () => {
                   type="text"
                   className="rounded-xl text-[14px] bg-light-grey focus:outline-none focus:ring-0 focus:border-transparent w-full py-4"
                   placeholder="Search event, ID..."
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
             </div>

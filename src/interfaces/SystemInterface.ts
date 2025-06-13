@@ -5,6 +5,8 @@ export interface UserInterface {
     status: number;
     role: string;
     image: string;
+    unique_id: string
+    created_at: string
 }
 
 export interface PlatformStatistics {
