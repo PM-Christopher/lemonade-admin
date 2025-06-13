@@ -201,7 +201,7 @@ const promotionSlice = createSlice({
                 state.loading = false;
                 console.log({
                     status: payload.status,
-                    stateProm: state.promotionData.promotions
+                    stateProm: state?.promotionData?.promotions
                 })
                 if (payload.status && state.promotionData?.promotions) {
                     const updatedPromotion = payload.data.promotion;
