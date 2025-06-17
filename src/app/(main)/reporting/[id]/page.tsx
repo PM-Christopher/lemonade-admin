@@ -66,15 +66,19 @@ function ReportDetailsPage() {
       });
     }
   };
-  const handleDelte = () => {
+  const handleDelete = () => {
     if (id && authToken) {
-      dispatch(deleteReport({ token: authToken, id: id })).then((res) => {
+      const data = {
+        category: report?.category,
+        category_id: report?.content?.id
+      };
+      dispatch(deleteReport({ token: authToken, id: id, data: data })).then((res) => {
 
          if (res.payload.status === true) {
           dispatch(
             updateToastifyReducer({
               show: true,
-              message: res.payload.message || "Report marked as resolved",
+              message: res.payload.message || "Report deleted successfully",
               type: "success",
             })
           );
@@ -92,6 +96,8 @@ function ReportDetailsPage() {
       });
     }
   };
+
+  console.log({report})
 
   return (
     <MainLayout>
@@ -188,7 +194,7 @@ function ReportDetailsPage() {
             }
           >
             <p className={"font-semiBold text-[16px]"}>Content</p>
-            <div className={"p-[10px] px-[14px] border-[1px] rounded-[12px]"} onClick={handleDelte}>
+            <div className={"p-[10px] px-[14px] border-[1px] rounded-[12px] cursor-pointer"} onClick={handleDelete}>
               <p className={"font-medium text-[14px]"} >Delete</p>
             </div>
           </div>

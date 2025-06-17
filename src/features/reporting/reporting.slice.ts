@@ -73,7 +73,7 @@ const resolveReport = createAsyncThunk("report/markReport", async ({ token, id }
 
 
 
-const deleteReport = createAsyncThunk("report/getReportDetail", async ({ token, id }: { token: string, id: number }, { rejectWithValue }) => {
+const deleteReport = createAsyncThunk("report/getReportDetail", async ({ token, id, data }: { token: string, id: number, data: any }, { rejectWithValue }) => {
     const headers = {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -81,7 +81,7 @@ const deleteReport = createAsyncThunk("report/getReportDetail", async ({ token, 
     };
 
     try {
-        let response = await axiosInstance.delete(`/admin/reports/${id}/delete-content`, { headers });
+        let response = await axiosInstance.patch(`/admin/reports/${id}/delete-content`, data, { headers });
         return response.data;
     } catch (err: any) {
         if (!err.response) {
