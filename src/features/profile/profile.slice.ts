@@ -4,7 +4,7 @@ import {axiosInstance} from "@/lib/axiosInstane";
 interface userState {
     loading: boolean;
     error: boolean;
-    profile: {} | null
+    profile: {} | any
 }
 
 const initialState: userState = {
